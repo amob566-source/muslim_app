@@ -38,7 +38,6 @@
     <string name="qibla_compass_coming">The live compass will be added in a later stage.</string>
 
     <!-- Settings screen -->
-    <string name="settings_coming_later">These settings are not available yet. They will be added in later stages.</string>
     <string name="settings_location_title">Location</string>
     <string name="settings_location_summary">Current location, saved cities, manual coordinates and time zone</string>
     <string name="settings_calculation_title">Prayer calculation</string>
@@ -47,4 +46,62 @@
     <string name="settings_azan_summary">Full Azan, short sound or silent for each prayer</string>
     <string name="settings_general_title">General</string>
     <string name="settings_general_summary">Time format, theme, privacy and app information</string>
+
+    <!-- Shared -->
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Location screen -->
+    <string name="location_screen_title">Location</string>
+    <string name="location_current_title">Selected location</string>
+    <string name="location_time_zone">Time zone: %1$s</string>
+    <string name="location_time_zone_invalid">The saved time zone is not recognised. Please choose one.</string>
+    <string name="location_source_city">Chosen from the city list</string>
+    <string name="location_source_manual">Entered by hand</string>
+    <string name="location_source_device">From this phone\'s location. The time zone was taken from the phone; change it if it is wrong.</string>
+    <string name="change_time_zone">Change time zone</string>
+
+    <string name="city_search_title">Search for a city</string>
+    <string name="city_search_label">City name</string>
+    <string name="city_search_loading">Loading city list…</string>
+    <string name="city_search_failed">The city list could not be loaded. You can still enter coordinates.</string>
+    <string name="city_search_no_results">No matching city. Only cities with more than 15,000 people are included; for smaller places, enter coordinates below.</string>
+    <string name="city_search_attribution">City data © GeoNames (geonames.org), CC BY 4.0. About 34,000 cities with more than 15,000 people.</string>
+
+    <string name="device_location_title">Use current location</string>
+    <string name="device_location_explanation">The app needs location permission to read your position once. It is only used to calculate prayer times and the Qibla direction, and it never leaves your phone. GPS works without internet, but the first fix can take a minute or two; go outdoors or near a window if it is slow.</string>
+    <string name="device_location_button">Use current location</string>
+    <string name="device_location_searching">Finding your location… This can take up to two minutes.</string>
+    <string name="device_location_denied">Location permission was not given. You can still search for a city or enter coordinates.</string>
+    <string name="device_location_denied_permanently">Location permission is turned off for this app. To use GPS, allow it in the app\'s system settings, or choose a city or coordinates instead.</string>
+    <string name="device_location_off">Location is turned off on this phone. Turn it on in system settings, or choose a city or coordinates instead.</string>
+    <string name="device_location_no_fix">Your location could not be found. Try again outdoors, or choose a city or coordinates instead.</string>
+    <string name="open_app_settings">Open app settings</string>
+    <string name="open_location_settings">Open location settings</string>
+    <string name="device_location_name">Current location</string>
+
+    <string name="manual_title">Enter coordinates</string>
+    <string name="manual_hint">Use decimal degrees. South latitudes and west longitudes are negative, for example 51.5074 and -0.1278 for London.</string>
+    <string name="manual_name_label">Name (optional)</string>
+    <string name="manual_latitude_label">Latitude (-90 to 90)</string>
+    <string name="manual_longitude_label">Longitude (-180 to 180)</string>
+    <string name="manual_time_zone_label">Time zone</string>
+    <string name="manual_time_zone_phone">%1$s (this phone\'s time zone)</string>
+    <string name="manual_time_zone_note">Check the time zone is right for this place. It decides the clock time shown for each prayer.</string>
+    <string name="manual_save">Save location</string>
+    <string name="error_coordinate_empty">Enter a number.</string>
+    <string name="error_coordinate_not_number">Enter a decimal number, such as 51.5074 or -0.1278.</string>
+    <string name="error_latitude_range">Latitude must be between -90 and 90.</string>
+    <string name="error_longitude_range">Longitude must be between -180 and 180.</string>
+
+    <!-- Time zone picker -->
+    <string name="time_zone_picker_title">Choose time zone</string>
+    <string name="time_zone_search_label">Search, e.g. London or Asia/Karachi</string>
+    <string name="time_zone_phone_option">Use this phone\'s time zone: %1$s</string>
+    <string name="time_zone_selected">Selected</string>
+
+    <!-- Settings -->
+    <string name="settings_location_selected">Selected: %1$s</string>
+    <string name="settings_location_none">No location selected yet</string>
+    <string name="settings_other_coming_later">Calculation, Azan and general settings will be added in later stages.</string>
 </resources>

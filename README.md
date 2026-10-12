@@ -3,9 +3,10 @@
 An offline, privacy-friendly Android app for prayer times, Azan alarms and a Qibla compass.
 No accounts, no ads, no analytics, no internet needed for normal use.
 
-**Current status:** Stage 1. The basic interface is in place: Prayer Times, Qibla and Settings
-screens with navigation between them. No prayer times are calculated yet, and the screen says so
-instead of showing invented times. Location, Qibla, Azan and alarms are not implemented yet.
+**Current status:** Stage 2. Screens and navigation are in place, and the user can choose a
+location (city search, typed coordinates or GPS). The choice is saved on the device. No prayer
+times are calculated yet, and the screen says so instead of showing invented times. Qibla, Azan
+and alarms are not implemented yet.
 
 ## Project facts
 
@@ -34,7 +35,12 @@ instead of showing invented times. Location, Qibla, Azan and alarms are not impl
 ```
 app/src/main/java/com/universalazan/app/
   MainActivity.kt          starts the app
+  UniversalAzanApp.kt      creates shared objects (AppContainer)
+  domain/location/         coordinate checking and time zone helpers (pure Kotlin)
+  data/locations/          saved-location model, offline city list and search, GPS reader
+  data/preferences/        saves settings on the device (DataStore)
   ui/navigation/           the three sections and the bottom bar / side rail
+  ui/location/             Location screen and time zone picker
   ui/prayer/               Prayer Times screen and its states (loading, error, ready)
   ui/qibla/                Qibla screen
   ui/settings/             Settings screen
@@ -72,13 +78,39 @@ The debug APK is created at `app\build\outputs\apk\debug\app-debug.apk`.
 
 ## Permissions
 
-The app's own manifest declares **no permissions**, not even internet.
-The final merged manifest contains one entry added automatically by the AndroidX Core library:
-`com.universalazan.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`. It is private to this app.
-It only stops other apps from sending messages to it, and gives no access to any data or hardware.
+| Permission | Why |
+|---|---|
+| `ACCESS_FINE_LOCATION` | Only requested when you tap **Use current location**. Precise location is needed for GPS, the only location source that works without internet. |
+| `ACCESS_COARSE_LOCATION` | Requested together with the one above. Android lets you choose "approximate" instead; the app then tries Android's other location sources. |
+| `com.universalazan.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | Added automatically by the AndroidX Core library. Private to this app; gives no access to any data or hardware. |
 
-Auto-backup is turned off (`android:allowBackup="false"`), so saved settings, which will include
-your location, are never uploaded to cloud backup.
+There is **no internet permission** and **no background location**. Refusing location
+permission does not stop the app working: you can search for a city or type coordinates.
+
+Your location is never sent anywhere. Backup is turned off (`allowBackup="false"` plus explicit
+backup and data-transfer rules), so saved settings are not uploaded to cloud backup or copied
+to a new phone.
+
+## Locations and time zones
+
+- **City search:** about 34,000 cities with more than 15,000 people, bundled in
+  `app/src/main/assets/cities.tsv`. Each city includes its time zone. Smaller places must be
+  entered as coordinates. Common English spellings are included for larger cities (for example,
+  "Mecca" finds Makkah and "Medina" finds Madinah).
+- **Typed coordinates:** decimal degrees, south and west negative. You must confirm a time zone;
+  the phone's time zone is offered first.
+- **GPS:** uses the phone's time zone, shown clearly with a button to change it, because the app
+  cannot work out a time zone from coordinates offline.
+
+### City data source and licence
+
+City data is from [GeoNames](https://www.geonames.org), licensed under
+[Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+The app shows this credit on the Location screen. To rebuild the file:
+
+1. Download `cities15000.zip` and `admin1CodesASCII.txt` from https://download.geonames.org/export/dump/
+   into a folder (for example `F:\tmp\geonames`) and unzip `cities15000.zip` there.
+2. From `F:\muslim app`, run: `G:\Python312\python.exe tools\build_cities.py F:\tmp\geonames`
 
 ## Internet use
 

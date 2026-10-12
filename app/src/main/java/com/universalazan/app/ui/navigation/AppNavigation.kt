@@ -37,9 +37,10 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.universalazan.app.R
+import com.universalazan.app.ui.location.LocationRoute
 import com.universalazan.app.ui.prayer.PrayerTimesRoute
 import com.universalazan.app.ui.qibla.QiblaScreen
-import com.universalazan.app.ui.settings.SettingsScreen
+import com.universalazan.app.ui.settings.SettingsRoute
 
 /** Width from which a side rail replaces the bottom bar (landscape phones, tablets). */
 private val WideLayoutMinWidth = 600.dp
@@ -51,7 +52,13 @@ private val WideLayoutMinWidth = 600.dp
 @Composable
 fun AppRoot(modifier: Modifier = Modifier) {
     var current by rememberSaveable { mutableStateOf(AppDestination.PrayerTimes) }
-    val navigate: (AppDestination) -> Unit = { current = it }
+    // The Location screen opens on top of whichever section the user came from.
+    var locationOpen by rememberSaveable { mutableStateOf(false) }
+    val navigate: (AppDestination) -> Unit = {
+        current = it
+        locationOpen = false
+    }
+    val openLocation = { locationOpen = true }
 
     // Back from Qibla or Settings returns to Prayer Times; back from Prayer Times leaves the app.
     BackHandler(enabled = current != AppDestination.PrayerTimes) {
@@ -80,16 +87,23 @@ fun AppRoot(modifier: Modifier = Modifier) {
                 },
             ) { innerPadding ->
                 val contentModifier = Modifier.padding(innerPadding)
-                when (current) {
-                    AppDestination.PrayerTimes -> PrayerTimesRoute(
-                        onChooseLocation = { navigate(AppDestination.Settings) },
-                        modifier = contentModifier,
-                    )
-                    AppDestination.Qibla -> QiblaScreen(
-                        onChooseLocation = { navigate(AppDestination.Settings) },
-                        modifier = contentModifier,
-                    )
-                    AppDestination.Settings -> SettingsScreen(modifier = contentModifier)
+                if (locationOpen) {
+                    LocationRoute(onClose = { locationOpen = false }, modifier = contentModifier)
+                } else {
+                    when (current) {
+                        AppDestination.PrayerTimes -> PrayerTimesRoute(
+                            onChooseLocation = openLocation,
+                            modifier = contentModifier,
+                        )
+                        AppDestination.Qibla -> QiblaScreen(
+                            onChooseLocation = openLocation,
+                            modifier = contentModifier,
+                        )
+                        AppDestination.Settings -> SettingsRoute(
+                            onOpenLocation = openLocation,
+                            modifier = contentModifier,
+                        )
+                    }
                 }
             }
         }

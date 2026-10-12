@@ -14,7 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,33 +22,30 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.universalazan.app.R
+import com.universalazan.app.data.locations.LocationSource
+import com.universalazan.app.data.locations.SavedLocation
+import com.universalazan.app.domain.location.formatCoordinates
 import com.universalazan.app.ui.common.ScreenContainer
 import com.universalazan.app.ui.theme.UniversalAzanTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-/**
- * Entry point used by navigation.
- * Stage 1: there is no location or calculation yet, so it always shows empty times.
- */
+/** Entry point used by navigation. */
 @Composable
 fun PrayerTimesRoute(
     onChooseLocation: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: PrayerTimesViewModel = viewModel(factory = PrayerTimesViewModel.Factory),
 ) {
-    val state = remember {
-        PrayerTimesUiState.Ready(
-            locationName = null,
-            date = LocalDate.now(),
-            prayers = notCalculatedPrayerRows(),
-        )
-    }
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     PrayerTimesScreen(
         state = state,
         onChooseLocation = onChooseLocation,
-        onRetry = {},
+        onRetry = viewModel::retry,
         modifier = modifier,
     )
 }
@@ -108,7 +105,7 @@ private fun ErrorContent(messageRes: Int, onRetry: () -> Unit) {
 
 @Composable
 private fun ReadyContent(state: PrayerTimesUiState.Ready, onChooseLocation: () -> Unit) {
-    LocationCard(state.locationName, onChooseLocation)
+    LocationCard(state.location, onChooseLocation)
     DateLine(state.date)
     if (state.prayers.any { it.time == null }) {
         NotCalculatedNotice()
@@ -117,7 +114,7 @@ private fun ReadyContent(state: PrayerTimesUiState.Ready, onChooseLocation: () -
 }
 
 @Composable
-private fun LocationCard(locationName: String?, onChooseLocation: () -> Unit) {
+private fun LocationCard(location: SavedLocation?, onChooseLocation: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -129,19 +126,36 @@ private fun LocationCard(locationName: String?, onChooseLocation: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = locationName ?: stringResource(R.string.location_not_selected),
+                text = location?.name ?: stringResource(R.string.location_not_selected),
                 style = MaterialTheme.typography.titleLarge,
             )
-            if (locationName == null) {
+            if (location == null) {
                 Text(
                     text = stringResource(R.string.location_not_selected_hint),
                     style = MaterialTheme.typography.bodyMedium,
                 )
+            } else {
+                Text(
+                    text = formatCoordinates(location.latitude, location.longitude),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                if (location.zoneId != null) {
+                    Text(
+                        text = stringResource(R.string.location_time_zone, location.timeZoneId),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.location_time_zone_invalid),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
             OutlinedButton(onClick = onChooseLocation) {
                 Text(
                     stringResource(
-                        if (locationName == null) R.string.choose_location else R.string.change_location,
+                        if (location == null) R.string.choose_location else R.string.change_location,
                     ),
                 )
             }
@@ -245,7 +259,11 @@ private fun PrayerRowItem(row: PrayerRowUi) {
 private fun PrayerTimesReadyPreview() {
     UniversalAzanTheme {
         PrayerTimesScreen(
-            state = PrayerTimesUiState.Ready(null, LocalDate.of(2026, 10, 12), notCalculatedPrayerRows()),
+            state = PrayerTimesUiState.Ready(
+                SavedLocation("London", 51.5085, -0.1257, "Europe/London", LocationSource.City),
+                LocalDate.of(2026, 10, 12),
+                notCalculatedPrayerRows(),
+            ),
             onChooseLocation = {},
             onRetry = {},
         )

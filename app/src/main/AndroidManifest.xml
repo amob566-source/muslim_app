@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  No permissions are declared on purpose. Each later stage must justify any permission it adds.
-  allowBackup="false": settings will include the user's location, and Android's auto-backup
-  would upload them to the cloud. This app keeps all data on the device.
+  Every permission here must be justified. Current list:
+  - ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION: only requested when the user taps
+    "Use current location". Precise (fine) is needed for GPS, the only source that works
+    without internet. Coarse alone is allowed; the app then tries other location sources.
+    No background location is ever requested. The location never leaves the device.
+  Backup: settings include the user's location, so allowBackup="false" (Android 11 and
+  older) and dataExtractionRules (Android 12+) keep all app data out of cloud backup and
+  phone-to-phone transfer. This app keeps all data on the device.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Location hardware is optional: users can always pick a city or type coordinates. -->
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.network"
+        android:required="false" />
+
     <application
+        android:name=".UniversalAzanApp"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"

@@ -2,6 +2,7 @@ package com.universalazan.app.ui.prayer
 
 import androidx.annotation.StringRes
 import com.universalazan.app.R
+import com.universalazan.app.data.locations.SavedLocation
 import java.time.LocalDate
 
 /** Everything the Prayer Times screen can show. */
@@ -12,7 +13,7 @@ sealed interface PrayerTimesUiState {
 
     data class Ready(
         /** Null when the user has not chosen a location yet. */
-        val locationName: String?,
+        val location: SavedLocation?,
         val date: LocalDate,
         val prayers: List<PrayerRowUi>,
     ) : PrayerTimesUiState

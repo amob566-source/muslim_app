@@ -8,6 +8,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.universalazan.app.R
+import com.universalazan.app.data.locations.LocationSource
+import com.universalazan.app.data.locations.SavedLocation
 import com.universalazan.app.ui.theme.UniversalAzanTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -48,9 +50,17 @@ class PrayerTimesScreenTest {
 
     @Test
     fun readyStateShowsSelectedLocationName() {
-        show(PrayerTimesUiState.Ready("London", LocalDate.of(2026, 10, 12), notCalculatedPrayerRows()))
+        show(
+            PrayerTimesUiState.Ready(
+                SavedLocation("London", 51.5085, -0.1257, "Europe/London", LocationSource.City),
+                LocalDate.of(2026, 10, 12),
+                notCalculatedPrayerRows(),
+            ),
+        )
         composeRule.onNodeWithText("London").assertIsDisplayed()
-        composeRule.onNodeWithText("Change location").assertIsDisplayed()
+        composeRule.onNodeWithText("51.5085° N, 0.1257° W").assertIsDisplayed()
+        composeRule.onNodeWithText("Time zone: Europe/London").assertIsDisplayed()
+        composeRule.onNodeWithText("Change location").performScrollTo().assertIsDisplayed()
     }
 
     @Test
