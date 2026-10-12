@@ -1,0 +1,4 @@
+<resources>
+    <!-- Change this to rename the app on the home screen. -->
+    <string name="app_name">Universal Azan &amp; Qibla</string>
+</resources>

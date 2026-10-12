@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window theme shown while the app starts; Compose draws everything else. -->
+    <style name="Theme.UniversalAzan" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

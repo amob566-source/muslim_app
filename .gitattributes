@@ -1,0 +1,7 @@
+# Keep consistent line endings across Windows/Mac/Linux
+* text=auto
+gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.webp binary
+*.png binary
