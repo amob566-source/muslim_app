@@ -1,0 +1,152 @@
+package com.universalazan.app.ui.navigation
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.universalazan.app.R
+import com.universalazan.app.ui.prayer.PrayerTimesRoute
+import com.universalazan.app.ui.qibla.QiblaScreen
+import com.universalazan.app.ui.settings.SettingsScreen
+
+/** Width from which a side rail replaces the bottom bar (landscape phones, tablets). */
+private val WideLayoutMinWidth = 600.dp
+
+/**
+ * Top-level app layout and navigation between the three sections.
+ * The selected section survives screen rotation (rememberSaveable).
+ */
+@Composable
+fun AppRoot(modifier: Modifier = Modifier) {
+    var current by rememberSaveable { mutableStateOf(AppDestination.PrayerTimes) }
+    val navigate: (AppDestination) -> Unit = { current = it }
+
+    // Back from Qibla or Settings returns to Prayer Times; back from Prayer Times leaves the app.
+    BackHandler(enabled = current != AppDestination.PrayerTimes) {
+        current = AppDestination.PrayerTimes
+    }
+
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val wide = maxWidth >= WideLayoutMinWidth
+        Row(modifier = Modifier.fillMaxSize()) {
+            if (wide) {
+                AppNavigationRail(current, navigate)
+            }
+            Scaffold(
+                modifier = Modifier.weight(1f),
+                topBar = { AppTopBar() },
+                bottomBar = {
+                    if (!wide) AppNavigationBar(current, navigate)
+                },
+                // The rail already handles the start-side inset in wide layouts.
+                contentWindowInsets = if (wide) {
+                    ScaffoldDefaults.contentWindowInsets.only(
+                        WindowInsetsSides.Vertical + WindowInsetsSides.End,
+                    )
+                } else {
+                    ScaffoldDefaults.contentWindowInsets
+                },
+            ) { innerPadding ->
+                val contentModifier = Modifier.padding(innerPadding)
+                when (current) {
+                    AppDestination.PrayerTimes -> PrayerTimesRoute(
+                        onChooseLocation = { navigate(AppDestination.Settings) },
+                        modifier = contentModifier,
+                    )
+                    AppDestination.Qibla -> QiblaScreen(
+                        onChooseLocation = { navigate(AppDestination.Settings) },
+                        modifier = contentModifier,
+                    )
+                    AppDestination.Settings -> SettingsScreen(modifier = contentModifier)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppTopBar() {
+    Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+        Column {
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.End),
+                    )
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
+                    .semantics { heading() },
+            )
+            // Thin gold line under the title.
+            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.secondary)
+        }
+    }
+}
+
+@Composable
+private fun AppNavigationBar(current: AppDestination, onNavigate: (AppDestination) -> Unit) {
+    NavigationBar {
+        AppDestination.entries.forEach { destination ->
+            NavigationBarItem(
+                selected = destination == current,
+                onClick = { onNavigate(destination) },
+                icon = { Icon(painterResource(destination.iconRes), contentDescription = null) },
+                label = { Text(stringResource(destination.labelRes)) },
+                modifier = Modifier.testTag(navTestTag(destination)),
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppNavigationRail(current: AppDestination, onNavigate: (AppDestination) -> Unit) {
+    NavigationRail(modifier = Modifier.fillMaxHeight()) {
+        AppDestination.entries.forEach { destination ->
+            NavigationRailItem(
+                selected = destination == current,
+                onClick = { onNavigate(destination) },
+                icon = { Icon(painterResource(destination.iconRes), contentDescription = null) },
+                label = { Text(stringResource(destination.labelRes)) },
+                modifier = Modifier.testTag(navTestTag(destination)),
+            )
+        }
+    }
+}
+
+/** Stable identifier so automated tests can find each navigation item. */
+fun navTestTag(destination: AppDestination): String = "nav_${destination.name}"

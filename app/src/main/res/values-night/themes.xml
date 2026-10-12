@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark window theme, so dark-mode users do not see a white flash at startup. -->
+    <style name="Theme.UniversalAzan" parent="android:Theme.Material.NoActionBar" />
+</resources>

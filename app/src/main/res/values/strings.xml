@@ -1,4 +1,50 @@
 <resources>
     <!-- Change this to rename the app on the home screen. -->
     <string name="app_name">Universal Azan &amp; Qibla</string>
+
+    <!-- Navigation -->
+    <string name="nav_prayer_times">Prayer Times</string>
+    <string name="nav_qibla">Qibla</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Location -->
+    <string name="location_label">Location</string>
+    <string name="location_not_selected">No location selected</string>
+    <string name="location_not_selected_hint">Choose a city or enter coordinates to see prayer times for your area.</string>
+    <string name="choose_location">Choose location</string>
+    <string name="change_location">Change location</string>
+
+    <!-- Prayer Times screen -->
+    <string name="today_label">Today</string>
+    <string name="not_calculated_notice">Sample layout only: prayer times are not calculated yet, so no times are shown.</string>
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Sunrise</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <string name="sunrise_info">For information, not a prayer</string>
+    <string name="time_placeholder">--:--</string>
+    <string name="time_not_calculated">not calculated yet</string>
+    <string name="loading_prayer_times">Loading prayer times…</string>
+    <string name="error_title">Something went wrong</string>
+    <string name="error_prayer_times">Prayer times could not be loaded.</string>
+    <string name="retry">Try again</string>
+
+    <!-- Qibla screen -->
+    <string name="qibla_direction_label">Qibla direction</string>
+    <string name="qibla_not_available">Not available yet</string>
+    <string name="qibla_not_available_hint">Choose a location first. The direction to the Kaaba is calculated from your location.</string>
+    <string name="qibla_compass_coming">The live compass will be added in a later stage.</string>
+
+    <!-- Settings screen -->
+    <string name="settings_coming_later">These settings are not available yet. They will be added in later stages.</string>
+    <string name="settings_location_title">Location</string>
+    <string name="settings_location_summary">Current location, saved cities, manual coordinates and time zone</string>
+    <string name="settings_calculation_title">Prayer calculation</string>
+    <string name="settings_calculation_summary">Calculation method, Asr madhab, high-latitude rule and adjustments</string>
+    <string name="settings_azan_title">Azan</string>
+    <string name="settings_azan_summary">Full Azan, short sound or silent for each prayer</string>
+    <string name="settings_general_title">General</string>
+    <string name="settings_general_summary">Time format, theme, privacy and app information</string>
 </resources>
