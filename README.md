@@ -3,10 +3,10 @@
 An offline, privacy-friendly Android app for prayer times, Azan alarms and a Qibla compass.
 No accounts, no ads, no analytics, no internet needed for normal use.
 
-**Current status:** Stage 2. Screens and navigation are in place, and the user can choose a
-location (city search, typed coordinates or GPS). The choice is saved on the device. No prayer
-times are calculated yet, and the screen says so instead of showing invented times. Qibla, Azan
-and alarms are not implemented yet.
+**Current status:** Stage 3. The user can choose a location (city search, typed coordinates or
+GPS), and prayer times are calculated on the device for that location's own date and time zone.
+Calculation method, Asr (Standard or Hanafi) and the high-latitude rule can be changed in
+Settings. Qibla, Azan audio and alarms are not implemented yet.
 
 ## Project facts
 
@@ -37,13 +37,14 @@ app/src/main/java/com/universalazan/app/
   MainActivity.kt          starts the app
   UniversalAzanApp.kt      creates shared objects (AppContainer)
   domain/location/         coordinate checking and time zone helpers (pure Kotlin)
+  domain/prayer/           prayer-time calculation with the Adhan library (pure Kotlin)
   data/locations/          saved-location model, offline city list and search, GPS reader
   data/preferences/        saves settings on the device (DataStore)
   ui/navigation/           the three sections and the bottom bar / side rail
   ui/location/             Location screen and time zone picker
   ui/prayer/               Prayer Times screen and its states (loading, error, ready)
   ui/qibla/                Qibla screen
-  ui/settings/             Settings screen
+  ui/settings/             Settings screen and Prayer calculation settings
   ui/common/               shared screen layout
   ui/theme/                colours (green and gold, light and dark)
 ```
@@ -111,6 +112,19 @@ The app shows this credit on the Location screen. To rebuild the file:
 1. Download `cities15000.zip` and `admin1CodesASCII.txt` from https://download.geonames.org/export/dump/
    into a folder (for example `F:\tmp\geonames`) and unzip `cities15000.zip` there.
 2. From `F:\muslim app`, run: `G:\Python312\python.exe tools\build_cities.py F:\tmp\geonames`
+
+## Prayer times
+
+- Calculated on the phone with the [Adhan library](https://github.com/batoulapps/adhan-kotlin)
+  (`com.batoulapps.adhan:adhan2`, MIT licence). No internet is used.
+- Default method: Muslim World League, Standard Asr, automatic high-latitude rule. No single method
+  is right for every community; users should choose the one their local mosque uses.
+- "Today" is the date at the selected location. Times are converted with the location's time zone,
+  so daylight saving is handled by Android's time-zone rules.
+- Where the sun does not rise or set on a date (polar day or night), the app explains that times
+  cannot be calculated.
+- How the results were checked against official and independent timetables, and every difference
+  found, is in [docs/prayer-time-validation.md](docs/prayer-time-validation.md).
 
 ## Internet use
 

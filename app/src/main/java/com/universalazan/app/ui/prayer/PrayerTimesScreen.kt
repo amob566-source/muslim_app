@@ -1,5 +1,7 @@
 package com.universalazan.app.ui.prayer
 
+import android.text.format.DateFormat
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,10 +15,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -28,9 +33,12 @@ import com.universalazan.app.R
 import com.universalazan.app.data.locations.LocationSource
 import com.universalazan.app.data.locations.SavedLocation
 import com.universalazan.app.domain.location.formatCoordinates
+import com.universalazan.app.domain.prayer.CalculationSettings
 import com.universalazan.app.ui.common.ScreenContainer
 import com.universalazan.app.ui.theme.UniversalAzanTheme
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -38,6 +46,7 @@ import java.time.format.FormatStyle
 @Composable
 fun PrayerTimesRoute(
     onChooseLocation: () -> Unit,
+    onOpenCalculationSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PrayerTimesViewModel = viewModel(factory = PrayerTimesViewModel.Factory),
 ) {
@@ -45,6 +54,7 @@ fun PrayerTimesRoute(
     PrayerTimesScreen(
         state = state,
         onChooseLocation = onChooseLocation,
+        onOpenCalculationSettings = onOpenCalculationSettings,
         onRetry = viewModel::retry,
         modifier = modifier,
     )
@@ -56,12 +66,13 @@ fun PrayerTimesScreen(
     onChooseLocation: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenCalculationSettings: () -> Unit = {},
 ) {
     ScreenContainer(title = stringResource(R.string.nav_prayer_times), modifier = modifier) {
         when (state) {
             PrayerTimesUiState.Loading -> LoadingContent()
             is PrayerTimesUiState.Error -> ErrorContent(state.messageRes, onRetry)
-            is PrayerTimesUiState.Ready -> ReadyContent(state, onChooseLocation)
+            is PrayerTimesUiState.Ready -> ReadyContent(state, onChooseLocation, onOpenCalculationSettings)
         }
     }
 }
@@ -104,13 +115,47 @@ private fun ErrorContent(messageRes: Int, onRetry: () -> Unit) {
 }
 
 @Composable
-private fun ReadyContent(state: PrayerTimesUiState.Ready, onChooseLocation: () -> Unit) {
+private fun ReadyContent(
+    state: PrayerTimesUiState.Ready,
+    onChooseLocation: () -> Unit,
+    onOpenCalculationSettings: () -> Unit,
+) {
     LocationCard(state.location, onChooseLocation)
     DateLine(state.date)
-    if (state.prayers.any { it.time == null }) {
-        NotCalculatedNotice()
+    // "No location" is already explained in the location card above.
+    val problemRes = when (state.problem) {
+        PrayerProblem.InvalidTimeZone -> R.string.problem_invalid_time_zone
+        PrayerProblem.InvalidCoordinates -> R.string.problem_invalid_coordinates
+        PrayerProblem.SunDoesNotRiseOrSet -> R.string.problem_sun
+        PrayerProblem.NoLocation, null -> null
     }
-    PrayerList(state.prayers)
+    if (problemRes != null) ProblemNotice(problemRes)
+    PrayerList(state.prayers, state.date)
+    if (state.settings != null) {
+        CalculationSummary(state.settings, onOpenCalculationSettings)
+    }
+}
+
+@Composable
+private fun CalculationSummary(settings: CalculationSettings, onOpenCalculationSettings: () -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            text = stringResource(
+                R.string.calculation_summary,
+                stringResource(settings.method.labelRes),
+                stringResource(settings.asrMadhab.shortLabelRes),
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            text = stringResource(R.string.calculation_disclaimer),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        TextButton(onClick = onOpenCalculationSettings) {
+            Text(stringResource(R.string.calculation_settings_button))
+        }
+    }
 }
 
 @Composable
@@ -165,7 +210,8 @@ private fun LocationCard(location: SavedLocation?, onChooseLocation: () -> Unit)
 
 @Composable
 private fun DateLine(date: LocalDate) {
-    val formatted = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(date)
+    val locale = LocalConfiguration.current.locales[0]
+    val formatted = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale).format(date)
     Column(modifier = Modifier.semantics(mergeDescendants = true) {}) {
         Text(
             text = stringResource(R.string.today_label),
@@ -177,7 +223,7 @@ private fun DateLine(date: LocalDate) {
 }
 
 @Composable
-private fun NotCalculatedNotice() {
+private fun ProblemNotice(messageRes: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -186,7 +232,7 @@ private fun NotCalculatedNotice() {
         ),
     ) {
         Text(
-            text = stringResource(R.string.not_calculated_notice),
+            text = stringResource(messageRes),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(16.dp),
         )
@@ -194,7 +240,7 @@ private fun NotCalculatedNotice() {
 }
 
 @Composable
-private fun PrayerList(prayers: List<PrayerRowUi>) {
+private fun PrayerList(prayers: List<PrayerRowUi>, date: LocalDate) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(vertical = 4.dp)) {
             prayers.forEachIndexed { index, row ->
@@ -204,25 +250,32 @@ private fun PrayerList(prayers: List<PrayerRowUi>) {
                         color = MaterialTheme.colorScheme.outlineVariant,
                     )
                 }
-                PrayerRowItem(row)
+                PrayerRowItem(row, date)
             }
         }
     }
 }
 
 @Composable
-private fun PrayerRowItem(row: PrayerRowUi) {
-    val timeText = row.time ?: stringResource(R.string.time_placeholder)
+private fun PrayerRowItem(row: PrayerRowUi, date: LocalDate) {
+    val formattedTime = row.time?.let { formatPrayerTime(it, date) }
+    val timeText = formattedTime ?: stringResource(R.string.time_placeholder)
     // Screen readers say "not calculated yet" instead of reading out "--:--".
-    val spokenTime = row.time ?: stringResource(R.string.time_not_calculated)
-    val textColor = if (row.isObligatory) {
-        MaterialTheme.colorScheme.onSurface
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+    val spokenTime = buildString {
+        append(formattedTime ?: stringResource(R.string.time_not_calculated))
+        if (row.isNext) append(", ").append(stringResource(R.string.next_prayer_spoken))
+    }
+    val textColor = when {
+        row.isNext -> MaterialTheme.colorScheme.onPrimaryContainer
+        row.isObligatory -> MaterialTheme.colorScheme.onSurface
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .then(
+                if (row.isNext) Modifier.background(MaterialTheme.colorScheme.primaryContainer) else Modifier,
+            )
             .semantics(mergeDescendants = true) {}
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -244,6 +297,13 @@ private fun PrayerRowItem(row: PrayerRowUi) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            if (row.isNext) {
+                Text(
+                    text = stringResource(R.string.next_prayer),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = textColor,
+                )
+            }
         }
         Text(
             text = timeText,
@@ -254,15 +314,32 @@ private fun PrayerRowItem(row: PrayerRowUi) {
     }
 }
 
+/**
+ * Formats a time in the phone's 12- or 24-hour style. Marks times that fall on another
+ * calendar day (possible for Isha or Fajr in some places).
+ */
+@Composable
+private fun formatPrayerTime(time: ZonedDateTime, date: LocalDate): String {
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
+    val pattern = if (DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm a"
+    val text = time.format(DateTimeFormatter.ofPattern(pattern, locale))
+    return when {
+        time.toLocalDate().isAfter(date) -> text + " " + stringResource(R.string.time_next_day)
+        time.toLocalDate().isBefore(date) -> text + " " + stringResource(R.string.time_previous_day)
+        else -> text
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun PrayerTimesReadyPreview() {
     UniversalAzanTheme {
         PrayerTimesScreen(
-            state = PrayerTimesUiState.Ready(
+            state = PrayerTimesViewModel.buildState(
                 SavedLocation("London", 51.5085, -0.1257, "Europe/London", LocationSource.City),
-                LocalDate.of(2026, 10, 12),
-                notCalculatedPrayerRows(),
+                CalculationSettings(),
+                Instant.parse("2026-10-13T13:00:00Z"),
             ),
             onChooseLocation = {},
             onRetry = {},

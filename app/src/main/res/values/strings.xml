@@ -16,7 +16,6 @@
 
     <!-- Prayer Times screen -->
     <string name="today_label">Today</string>
-    <string name="not_calculated_notice">Sample layout only: prayer times are not calculated yet, so no times are shown.</string>
     <string name="prayer_fajr">Fajr</string>
     <string name="prayer_sunrise">Sunrise</string>
     <string name="prayer_dhuhr">Dhuhr</string>
@@ -103,5 +102,69 @@
     <!-- Settings -->
     <string name="settings_location_selected">Selected: %1$s</string>
     <string name="settings_location_none">No location selected yet</string>
-    <string name="settings_other_coming_later">Calculation, Azan and general settings will be added in later stages.</string>
+    <string name="settings_other_coming_later">Azan and general settings will be added in later stages.</string>
+
+    <!-- Prayer Times: calculated state -->
+    <string name="next_prayer">Next</string>
+    <string name="next_prayer_spoken">next prayer</string>
+    <string name="time_next_day">(next day)</string>
+    <string name="time_previous_day">(previous day)</string>
+    <string name="calculation_summary">Method: %1$s · Asr: %2$s</string>
+    <string name="calculation_settings_button">Calculation settings</string>
+    <string name="calculation_disclaimer">Times are calculated on this phone. Local mosques may use different methods or adjustments; follow your local timetable if it differs.</string>
+    <string name="problem_invalid_time_zone">The saved time zone is not recognised, so times cannot be shown. Choose a time zone in Location settings.</string>
+    <string name="problem_invalid_coordinates">The saved coordinates are not valid. Please choose your location again.</string>
+    <string name="problem_sun">Prayer times cannot be calculated here for this date, because the sun does not rise or does not set. Please follow your local mosque\'s timetable.</string>
+
+    <!-- Calculation methods -->
+    <string name="method_mwl">Muslim World League</string>
+    <string name="method_mwl_desc">Fajr 18°, Isha 17°. Widely used in Europe, the Far East and parts of America.</string>
+    <string name="method_egyptian">Egyptian General Authority of Survey</string>
+    <string name="method_egyptian_desc">Fajr 19.5°, Isha 17.5°. Used in much of Africa and the Middle East.</string>
+    <string name="method_karachi">University of Islamic Sciences, Karachi</string>
+    <string name="method_karachi_desc">Fajr 18°, Isha 18°. Used in Pakistan, Bangladesh, India and Afghanistan.</string>
+    <string name="method_umm_al_qura">Umm al-Qura, Makkah</string>
+    <string name="method_umm_al_qura_desc">Fajr 18.5°, Isha 90 minutes after Maghrib. Used in Saudi Arabia. In Ramadan the official Isha is 120 minutes after Maghrib; this is not applied automatically.</string>
+    <string name="method_dubai">Dubai</string>
+    <string name="method_dubai_desc">Fajr 18.2°, Isha 18.2°. Used in the United Arab Emirates.</string>
+    <string name="method_moonsighting">Moonsighting Committee</string>
+    <string name="method_moonsighting_desc">Fajr and Isha 18° with seasonal adjustments. Used by some communities in North America and the UK.</string>
+    <string name="method_north_america">ISNA (North America)</string>
+    <string name="method_north_america_desc">Fajr 15°, Isha 15°. Used by the Islamic Society of North America.</string>
+    <string name="method_kuwait">Kuwait</string>
+    <string name="method_kuwait_desc">Fajr 18°, Isha 17.5°. Used in Kuwait.</string>
+    <string name="method_qatar">Qatar</string>
+    <string name="method_qatar_desc">Fajr 18°, Isha 90 minutes after Maghrib. Used in Qatar.</string>
+    <string name="method_singapore">Singapore, Malaysia, Indonesia</string>
+    <string name="method_singapore_desc">Fajr 20°, Isha 18°. In our checks, Malaysia\'s official (JAKIM) Fajr was 10 minutes later than this method.</string>
+    <string name="method_turkey">Turkey (Diyanet, approximate)</string>
+    <string name="method_turkey_desc">Fajr 18°, Isha 17°, with adjustments that approximate Turkey\'s official times.</string>
+
+    <!-- Asr -->
+    <string name="asr_standard">Standard</string>
+    <string name="asr_standard_long">Standard (Shafi\'i, Maliki, Hanbali)</string>
+    <string name="asr_standard_desc">Asr begins when an object\'s shadow equals its length.</string>
+    <string name="asr_hanafi">Hanafi</string>
+    <string name="asr_hanafi_desc">Asr begins when the shadow is twice the object\'s length (later).</string>
+
+    <!-- High latitude -->
+    <string name="high_lat_automatic">Automatic (recommended)</string>
+    <string name="high_lat_automatic_desc">One-seventh of the night above 48° latitude; middle of the night elsewhere.</string>
+    <string name="high_lat_middle">Middle of the night</string>
+    <string name="high_lat_middle_desc">Fajr no earlier, and Isha no later, than the middle of the night.</string>
+    <string name="high_lat_seventh">One-seventh of the night</string>
+    <string name="high_lat_seventh_desc">Fajr no earlier than the last seventh of the night; Isha no later than the first seventh.</string>
+    <string name="high_lat_twilight">Twilight angle</string>
+    <string name="high_lat_twilight_desc">Limits based on the Fajr and Isha angles (angle ÷ 60 of the night).</string>
+
+    <!-- Calculation settings screen -->
+    <string name="calc_settings_title">Prayer calculation</string>
+    <string name="calc_method_title">Calculation method</string>
+    <string name="calc_method_note">No single method is right for every community. Choose the one your local mosque uses.</string>
+    <string name="calc_asr_title">Asr time</string>
+    <string name="calc_high_lat_title">High-latitude rule</string>
+    <string name="calc_high_lat_note">Far from the equator the sun may not go low enough for the usual Fajr and Isha angles, especially in summer. These rules set a limit. Where the sun does not rise or set at all, times cannot be calculated.</string>
+    <string name="calc_reset">Reset to defaults</string>
+    <string name="calc_adjustments_later">Per-prayer minute adjustments will be added to Settings in a later stage.</string>
+    <string name="settings_calculation_current">%1$s · Asr: %2$s</string>
 </resources>

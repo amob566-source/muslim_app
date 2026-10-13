@@ -23,7 +23,7 @@ class AppNavigationTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ClearSavedLocationRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
 
     private fun nav(destination: AppDestination) = composeRule.onNodeWithTag(navTestTag(destination))
 
