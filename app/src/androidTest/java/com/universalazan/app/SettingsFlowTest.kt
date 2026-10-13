@@ -117,7 +117,7 @@ class SettingsFlowTest {
     fun aboutShowsVersionAndPrivacy() {
         nav(AppDestination.Settings)
         composeRule.onNodeWithTag(SETTINGS_ABOUT_TAG).performScrollTo().performClick()
-        composeRule.onNodeWithTag(ABOUT_VERSION_TAG).assertTextEquals("Version 0.1.0")
+        composeRule.onNodeWithTag(ABOUT_VERSION_TAG).assertTextEquals("Version 1.0.0")
         composeRule.onNodeWithText("no internet permission", substring = true).performScrollTo()
         assertTrue(composeRule.onAllNodesWithText("GeoNames", substring = true).fetchSemanticsNodes().isNotEmpty())
     }

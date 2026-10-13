@@ -7,8 +7,14 @@
     No background location is ever requested. The location never leaves the device.
   - POST_NOTIFICATIONS: shows the "Azan playing" notification with a Stop button. Asked for in
     the app (Android 13+); the Azan still plays without it, but the notification is hidden.
-  - SCHEDULE_EXACT_ALARM: lets the Azan start at the exact minute. Granted by the user in system
-    settings (the app links there). Without it, Android may deliver alarms late.
+  - USE_EXACT_ALARM (Android 13+) / SCHEDULE_EXACT_ALARM (Android 12 only): lets the Azan start
+    at the exact minute. Playing the Azan at prayer times is this app's core alarm function, which
+    is what USE_EXACT_ALARM is for; it is granted at install. Without an exact alarm Android
+    delivers the alarm late AND refuses to start the Azan player from the background, so the
+    Azan would stay silent (found in the Stage 12 fresh-install test: Android 13+ does not grant
+    SCHEDULE_EXACT_ALARM to new installs). Android 12 grants SCHEDULE_EXACT_ALARM by default
+    but the user can turn it off; the app then warns and links to the setting.
+    Android 8-11 need no permission for exact alarms.
   - RECEIVE_BOOT_COMPLETED: alarms are cleared when the phone restarts; this lets the app
     schedule the next prayer times again.
   - FOREGROUND_SERVICE / FOREGROUND_SERVICE_MEDIA_PLAYBACK: lets the Azan keep playing while the
@@ -23,7 +29,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />

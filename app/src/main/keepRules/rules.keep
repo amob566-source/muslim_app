@@ -1,12 +1,16 @@
-# Add project specific R8 rules here.
-# AGP will combine all keep rule files in src/main/keepRules to pass to R8
-#
-# For more details, see
-#   https://d.android.com/r/tools/r8/keep-rules
+# R8 keep rules for the release build (AGP combines every file in src/main/keepRules).
+# See https://d.android.com/r/tools/r8/keep-rules
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Our enums are stored by name: in saved settings (DataStore, e.g. "MuslimWorldLeague", "Dark")
+# and in the extras of scheduled prayer alarms, which survive an app update. If R8 renamed the
+# enum constants, an updated app would no longer recognise settings or alarms saved by the old one.
+# Keep the constant names; R8 may still optimise everything else in the enum.
+-keepclassmembernames enum com.universalazan.app.** {
+    public static final ** *;
+}
+
+# Don't move Kotlin standard-library classes into other packages. With partial optimisation
+# (packageScope) R8 moved kotlin.sequences.SequencesKt___SequencesJvmKt out of its package while
+# its package-private parent class stayed behind, and the release build crashed on start-up with
+# IllegalAccessError (found in the Stage 12 release smoke test).
+-keeppackagenames kotlin.**

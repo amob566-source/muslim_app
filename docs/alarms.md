@@ -12,9 +12,12 @@
   switch change, when the app starts, and after: phone restart, clock change, time-zone change,
   app update, and exact-alarm permission change (`SystemEventsReceiver`).
 - **Exact alarms** (`setExactAndAllowWhileIdle`) fire on time even in battery-saving idle mode. They
-  need "Alarms and reminders" permission on Android 12+, which the user grants in system settings
-  (Settings → Prayer alarms → Allow exact alarms). Without it, inexact alarms are used, which may be
-  late, and Android may refuse to start the Azan from the background.
+  need permission on Android 12+: `USE_EXACT_ALARM` on Android 13+ (granted at install; this is an
+  alarm app) and `SCHEDULE_EXACT_ALARM` on Android 12 (on by default, the user can turn it off:
+  Settings → Prayer alarms → Allow exact alarms). Without an exact alarm, inexact alarms are used,
+  which may be late, **and Android refuses to start the Azan from the background, so it stays
+  silent**. Stage 12 found that Android 13+ gives new installs no `SCHEDULE_EXACT_ALARM`, so the
+  Azan was silent on a fresh install until the user found the setting; `USE_EXACT_ALARM` fixes this.
 - **Playback** runs in a short foreground service (`AzanPlaybackService`) with a notification
   ("Azan: Dhuhr", Stop button), so it works with the app closed and the screen locked. The service
   stops itself when the Azan ends.
@@ -51,7 +54,8 @@ Code: `app/src/main/java/com/universalazan/app/alarms/`.
 
 | Permission | Why |
 |---|---|
-| `SCHEDULE_EXACT_ALARM` | Start the Azan at the exact minute. User grants it in system settings. |
+| `USE_EXACT_ALARM` (Android 13+) | Start the Azan at the exact minute. Granted at install. |
+| `SCHEDULE_EXACT_ALARM` (Android 12 only) | The same on Android 12; on by default, the user can turn it off. |
 | `POST_NOTIFICATIONS` | Show the "Azan playing / Stop" notification (Android 13+). The Azan still plays without it. |
 | `RECEIVE_BOOT_COMPLETED` | Schedule alarms again after the phone restarts. |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | Keep playing in the background with a visible notification. |
@@ -74,7 +78,8 @@ Code: `app/src/main/java/com/universalazan/app/alarms/`.
 | **Screen locked**: test alarm fired, Android allowed the background start, Azan played, notification shown, service stopped itself when the Azan ended | Pass (manual, emulator) |
 | **Real reboot**: all 5 alarms back without opening the app, still exact | Pass (manual, emulator) |
 | **Phone time-zone change** (London → Tokyo): still 5 alarms at exactly the same moments | Pass (manual, emulator) |
-| Fresh install: screen shows exact alarms and notifications missing; "Allow exact alarms" opens Android's page; after granting, all 5 alarms become exact | Pass (manual, emulator) |
+| Fresh install (Stage 11, before `USE_EXACT_ALARM`): screen shows exact alarms and notifications missing; "Allow exact alarms" opens Android's page; after granting, all 5 alarms become exact | Pass (manual, emulator) |
+| **Fresh install, nothing granted by hand (Stage 12, release build):** before the fix, the Maghrib alarm fired but Android refused to start the Azan (`ForegroundServiceStartNotAllowedException`), so it was silent. After the fix: all alarms exact at install (`exactAllowReason=policy_permission`); Isha alarm fired at 12:52:00.012 and the Azan played in the background | Fixed, pass (manual, emulator) |
 | Re-planning with nothing changed: no alarm re-set, Android keeps the very same alarms | Pass (automated) |
 | Changing one prayer's sound: only that alarm is re-set | Pass (automated) |
 | Daily check exists only while alarms are on; restores alarms after they are lost | Pass (automated) |

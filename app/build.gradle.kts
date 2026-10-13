@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -17,16 +19,37 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Release signing. The key and its passwords are never in this project or in Git: the
+    // machine-wide Gradle settings (GRADLE_USER_HOME/gradle.properties) name a properties file
+    // kept elsewhere, e.g. universalAzan.signingProperties=F:/UniversalAzan-keys/signing.properties
+    // Without it the release APK is built unsigned. See docs/release.md.
+    val signingFile = providers.gradleProperty("universalAzan.signingProperties").orNull?.let { file(it) }
+    val releaseSigning = if (signingFile != null && signingFile.isFile) {
+        val props = Properties().apply { signingFile.inputStream().use { load(it) } }
+        signingConfigs.create("release") {
+            storeFile = file(props.getProperty("storeFile"))
+            storePassword = props.getProperty("storePassword")
+            keyAlias = props.getProperty("keyAlias")
+            keyPassword = props.getProperty("keyPassword")
+        }
+    } else {
+        null
+    }
+
     buildTypes {
         release {
+            signingConfig = releaseSigning
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
+                packageScope = setOf(
+                    "androidx.**", "kotlin.**", "kotlinx.**",
+                    "com.batoulapps.**", "com.universalazan.app.**",
+                )
             }
         }
     }

@@ -3,7 +3,8 @@
 An offline, privacy-friendly Android app for prayer times, Azan alarms and a Qibla compass.
 No accounts, no ads, no analytics, no internet needed for normal use.
 
-**Current status:** Stage 3. The user can choose a location (city search, typed coordinates or
+**Current status:** version 1.0.0, all 13 stages complete (see [docs/release.md](docs/release.md)
+for the release build, signing and installing on a phone). The user can choose a location (city search, typed coordinates or
 GPS), and prayer times are calculated on the device for that location's own date and time zone.
 Calculation method, Asr (Standard or Hanafi) and the high-latitude rule can be changed in
 Settings. The Qibla direction is calculated offline from the saved location, with a live compass
@@ -24,7 +25,8 @@ time, light/dark theme, and an About and privacy page.
 | Language / UI | Kotlin, Jetpack Compose (Material 3) |
 | Build tools | Android Gradle Plugin 9.4.1, Gradle 9.6.0, Kotlin 2.4.21 |
 | Library versions | `gradle/libs.versions.toml` |
-| Permissions | None declared by the app (see below) |
+| Version | 1.0.0 (`versionName`), `versionCode` 1, in `app/build.gradle.kts` |
+| Permissions | See [Permissions](#permissions) below; no internet |
 
 ## This PC's setup (nothing on C:)
 
@@ -88,13 +90,18 @@ Then:
 
 The debug APK is created at `app\build\outputs\apk\debug\app-debug.apk`.
 
+Release build (smaller, optimised, signed with the key on F:): `.\gradlew.bat assembleRelease`
+→ `app\build\outputs\apk\release\app-release.apk`. Installing on a phone, the signing key and
+backing it up are explained in [docs/release.md](docs/release.md).
+
 ## Permissions
 
 | Permission | Why |
 |---|---|
 | `ACCESS_FINE_LOCATION` | Only requested when you tap **Use current location**. Precise location is needed for GPS, the only location source that works without internet. |
 | `ACCESS_COARSE_LOCATION` | Requested together with the one above. Android lets you choose "approximate" instead; the app then tries Android's other location sources. |
-| `SCHEDULE_EXACT_ALARM` | Starts the Azan at the exact minute. You allow it in system settings (Settings → Prayer alarms → Allow exact alarms). |
+| `USE_EXACT_ALARM` (Android 13+) | Starts the Azan at the exact minute. Granted automatically at install, because playing the Azan at prayer times is this app's core alarm function. Without an exact alarm, Android would also refuse to start the Azan in the background. |
+| `SCHEDULE_EXACT_ALARM` (Android 12 only) | The same for Android 12, where it is on by default. If you turn it off, the app warns you (Settings → Prayer alarms → Allow exact alarms). Android 8–11 need no permission. |
 | `POST_NOTIFICATIONS` | Shows the "Azan playing" notification with a Stop button. Asked for in the app. |
 | `RECEIVE_BOOT_COMPLETED` | Schedules the next Azans again after the phone restarts. |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | Keeps the Azan playing while the app is closed or the screen is locked. |
