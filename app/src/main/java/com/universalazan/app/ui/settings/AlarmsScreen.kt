@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.universalazan.app.R
 import com.universalazan.app.alarms.PlannedAlarm
+import com.universalazan.app.alarms.manufacturerAlarmTip
 import com.universalazan.app.data.locations.SavedLocation
 import com.universalazan.app.ui.common.ScreenContainer
 import com.universalazan.app.ui.common.formatClockTime
@@ -177,6 +178,17 @@ fun AlarmsScreen(
             }
         }
 
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(R.string.alarms_tip_title), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = stringResource(manufacturerAlarmTip(Build.MANUFACTURER)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.testTag(ALARMS_TIP_TAG),
+                )
+            }
+        }
+
         SectionTitle(stringResource(R.string.alarms_upcoming_title))
         Card(modifier = Modifier.fillMaxWidth().testTag(ALARMS_UPCOMING_TAG)) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -274,3 +286,4 @@ private fun openBatterySettings(context: Context) {
 const val ALARMS_SWITCH_TAG = "alarms_switch"
 const val ALARMS_UPCOMING_TAG = "alarms_upcoming"
 const val ALARMS_TEST_TAG = "alarms_test"
+const val ALARMS_TIP_TAG = "alarms_tip"

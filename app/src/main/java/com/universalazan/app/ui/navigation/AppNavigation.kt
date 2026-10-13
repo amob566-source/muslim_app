@@ -35,6 +35,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.universalazan.app.R
 import com.universalazan.app.ui.location.LocationRoute
@@ -160,7 +162,7 @@ private fun AppNavigationBar(current: AppDestination, onNavigate: (AppDestinatio
                 selected = destination == current,
                 onClick = { onNavigate(destination) },
                 icon = { Icon(painterResource(destination.iconRes), contentDescription = null) },
-                label = { Text(stringResource(destination.labelRes)) },
+                label = { NavLabel(destination) },
                 modifier = Modifier.testTag(navTestTag(destination)),
             )
         }
@@ -175,7 +177,7 @@ private fun AppNavigationRail(current: AppDestination, onNavigate: (AppDestinati
                 selected = destination == current,
                 onClick = { onNavigate(destination) },
                 icon = { Icon(painterResource(destination.iconRes), contentDescription = null) },
-                label = { Text(stringResource(destination.labelRes)) },
+                label = { NavLabel(destination) },
                 modifier = Modifier.testTag(navTestTag(destination)),
             )
         }
@@ -184,3 +186,14 @@ private fun AppNavigationRail(current: AppDestination, onNavigate: (AppDestinati
 
 /** Stable identifier so automated tests can find each navigation item. */
 fun navTestTag(destination: AppDestination): String = "nav_${destination.name}"
+
+/** Centred, at most two lines, so long labels stay under their icon at large font sizes. */
+@Composable
+private fun NavLabel(destination: AppDestination) {
+    Text(
+        text = stringResource(destination.labelRes),
+        textAlign = TextAlign.Center,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+    )
+}

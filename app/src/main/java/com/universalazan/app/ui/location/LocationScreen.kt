@@ -409,7 +409,7 @@ private fun ManualSection(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        OutlinedButton(onClick = onPickTimeZone) { Text(stringResource(R.string.change_time_zone)) }
+        OutlinedButton(onClick = onPickTimeZone) { Text(stringResource(R.string.manual_choose_time_zone)) }
         Button(onClick = onSave, modifier = Modifier.testTag(MANUAL_SAVE_TAG)) {
             Text(stringResource(R.string.manual_save))
         }

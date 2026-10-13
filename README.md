@@ -186,6 +186,11 @@ The app shows this credit on the Location screen. To rebuild the file:
 
 All settings are saved on the phone (DataStore) and survive restarts.
 
+## Quality checks
+
+Accessibility (automated checks on every screen), large text, small and large screens, rotation,
+error messages and alarm-restriction tips were reviewed in Stage 10: [docs/quality-review.md](docs/quality-review.md).
+
 ## Internet use
 
 Normal use of the app needs no internet. Internet is only needed to install the app, to download

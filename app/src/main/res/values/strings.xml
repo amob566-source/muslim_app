@@ -82,6 +82,7 @@
     <string name="manual_time_zone_label">Time zone</string>
     <string name="manual_time_zone_phone">%1$s (this phone\'s time zone)</string>
     <string name="manual_time_zone_note">Check the time zone is right for this place. It decides the clock time shown for each prayer.</string>
+    <string name="manual_choose_time_zone">Choose time zone for these coordinates</string>
     <string name="manual_save">Save location</string>
     <string name="error_coordinate_empty">Enter a number.</string>
     <string name="error_coordinate_not_number">Enter a decimal number, such as 51.5074 or -0.1278.</string>
@@ -295,4 +296,13 @@
     <string name="about_sources_text">• Prayer times: Adhan library by Batoul Apps (MIT licence).\n• City list: GeoNames (geonames.org), Creative Commons Attribution 4.0.\n• True north correction: the World Magnetic Model built into Android.\n• Built with Kotlin, Jetpack Compose and AndroidX (Apache licence 2.0).</string>
     <string name="about_limits_title">Limitations</string>
     <string name="about_limits_text">• Prayer times are calculated, not copied from a mosque. Methods differ between communities; check against your local mosque and use the minute adjustments if needed.\n• Where the sun does not rise or set (polar regions), times cannot be calculated.\n• A phone compass can be disturbed by magnets, metal and electronics.\n• Android cannot guarantee that an alarm will sound in every situation (see Prayer alarms).</string>
+
+    <!-- Phone-maker tips for alarms -->
+    <string name="alarms_tip_title">Tip for your phone</string>
+    <string name="alarms_tip_samsung">Samsung: Settings, Apps, Universal Azan &amp; Qibla, Battery, choose \"Unrestricted\". Also check Settings, Battery, Background usage limits, and make sure the app is not in \"Sleeping apps\" or \"Deep sleeping apps\".</string>
+    <string name="alarms_tip_xiaomi">Xiaomi, Redmi or POCO: Settings, Apps, Manage apps, Universal Azan &amp; Qibla. Turn on \"Autostart\" and set Battery saver to \"No restrictions\".</string>
+    <string name="alarms_tip_huawei">Huawei or Honor: Settings, Battery, App launch, Universal Azan &amp; Qibla. Choose \"Manage manually\" and turn on all three options.</string>
+    <string name="alarms_tip_oppo">OPPO, realme or OnePlus: Settings, Battery, then find Universal Azan &amp; Qibla and allow background activity. Also turn on \"Auto launch\" (or \"Allow auto launch\") if your phone has it.</string>
+    <string name="alarms_tip_vivo">vivo or iQOO: Settings, Battery, Background power consumption management, Universal Azan &amp; Qibla, choose \"Allow\". Also turn on \"Auto start\" in the app\'s settings.</string>
+    <string name="alarms_tip_general">If an Azan does not play: in your phone\'s settings, open Apps, Universal Azan &amp; Qibla, Battery, and choose \"Unrestricted\" (the name varies by phone). Then use \"Test alarm in 1 minute\" with the screen locked.</string>
 </resources>

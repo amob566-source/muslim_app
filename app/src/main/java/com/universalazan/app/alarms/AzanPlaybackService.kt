@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.text.format.DateFormat
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -19,7 +20,9 @@ import com.universalazan.app.R
 import com.universalazan.app.UniversalAzanApp
 import com.universalazan.app.audio.AzanSound
 import com.universalazan.app.audio.PlaybackState
+import com.universalazan.app.data.preferences.TimeFormatSetting
 import com.universalazan.app.domain.prayer.Prayer
+import com.universalazan.app.ui.common.formatClockTime
 import com.universalazan.app.ui.settings.labelRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,8 +31,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.text.DateFormat
-import java.util.Date
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
+import java.time.Instant
+import java.time.ZoneId
 
 /**
  * Plays an Azan in the background (also with the screen locked) as a short "foreground service",
@@ -94,7 +99,11 @@ class AzanPlaybackService : Service() {
     private fun buildNotification(prayer: Prayer, time: Long, isTest: Boolean): Notification {
         val prayerName = getString(prayer.labelRes)
         val title = if (isTest) getString(R.string.alarm_test_notification_title) else getString(R.string.alarm_notification_title, prayerName)
-        val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(time))
+        val timeText = formatClockTime(
+            Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()),
+            use24Hour = use24HourClock(),
+            locale = resources.configuration.locales[0],
+        )
         val openApp = PendingIntent.getActivity(
             this, 0,
             Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP),
@@ -119,6 +128,23 @@ class AzanPlaybackService : Service() {
             .addAction(0, getString(R.string.alarm_notification_stop), stop)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .build()
+    }
+
+    /**
+     * The app's 12/24-hour setting. Read with a short time limit because the notification must be
+     * shown within a few seconds; falls back to the phone's setting.
+     */
+    private fun use24HourClock(): Boolean {
+        val setting = runBlocking {
+            withTimeoutOrNull(300) {
+                (application as UniversalAzanApp).container.generalSettingsRepository.settings.first().timeFormat
+            }
+        } ?: TimeFormatSetting.System
+        return when (setting) {
+            TimeFormatSetting.TwentyFourHour -> true
+            TimeFormatSetting.TwelveHour -> false
+            TimeFormatSetting.System -> DateFormat.is24HourFormat(this)
+        }
     }
 
     companion object {

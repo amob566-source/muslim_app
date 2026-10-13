@@ -95,7 +95,7 @@ class LocationFlowTest {
     @Test
     fun manualTimeZoneCanBeChosen() {
         openLocationScreen()
-        composeRule.onNodeWithText("Change time zone").performScrollTo().performClick()
+        composeRule.onNodeWithText("Choose time zone for these coordinates").performScrollTo().performClick()
         composeRule.onNodeWithTag(TIME_ZONE_SEARCH_TAG).performTextInput("Tokyo")
         composeRule.onNodeWithText("Asia/Tokyo").performClick()
         composeRule.onNodeWithTag(MANUAL_TIME_ZONE_TAG).performScrollTo().assertTextEquals("Asia/Tokyo")
