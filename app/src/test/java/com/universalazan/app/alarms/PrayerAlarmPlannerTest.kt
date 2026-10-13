@@ -147,4 +147,22 @@ class PrayerAlarmPlannerTest {
         assertTrue(PrayerAlarmPlanner.isMissed(due, due.plus(Duration.ofMinutes(6))))
         assertTrue(PrayerAlarmPlanner.isMissed(due, due.plus(Duration.ofHours(3))))
     }
+
+    @Test
+    fun dailyCheckIsNextHalfPastThreeLocalTime() {
+        val london = ZoneId.of("Europe/London")
+        // 13 Oct 14:00 BST -> 14 Oct 03:30 BST.
+        assertEquals(Instant.parse("2026-10-14T02:30:00Z"), PrayerAlarmPlanner.nextDailyCheck(Instant.parse("2026-10-13T13:00:00Z"), london))
+        // 13 Oct 01:00 BST -> same day 03:30 BST.
+        assertEquals(Instant.parse("2026-10-13T02:30:00Z"), PrayerAlarmPlanner.nextDailyCheck(Instant.parse("2026-10-13T00:00:00Z"), london))
+        // Exactly at 03:30 -> the next day (always strictly in the future).
+        assertEquals(Instant.parse("2026-10-14T02:30:00Z"), PrayerAlarmPlanner.nextDailyCheck(Instant.parse("2026-10-13T02:30:00Z"), london))
+    }
+
+    @Test
+    fun dailyCheckOnTheNightClocksGoBack() {
+        // 24 Oct 22:00 BST; clocks go back at 02:00 on 25 Oct, so 03:30 that night is GMT.
+        val check = PrayerAlarmPlanner.nextDailyCheck(Instant.parse("2026-10-24T21:00:00Z"), ZoneId.of("Europe/London"))
+        assertEquals(Instant.parse("2026-10-25T03:30:00Z"), check)
+    }
 }

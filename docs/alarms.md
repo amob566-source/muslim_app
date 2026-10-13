@@ -25,7 +25,27 @@
 - Alarm times are fixed moments in real time, computed for the *chosen location*. Changing the
   phone's time zone does not move them.
 
+- **Alarms that are still correct are left alone.** The scheduler remembers what it last gave
+  Android and only re-sets a prayer whose time, sound or exactness changed. (The memory is lost when
+  the app process ends, which is exactly when Android may have cleared alarms, so everything is then
+  set again.)
+- **Daily safety net.** While alarms are on, one extra battery-friendly (inexact) alarm at about 03:30
+  each night re-plans everything, in case an earlier re-plan was interrupted. No service runs all the time.
+
 Code: `app/src/main/java/com/universalazan/app/alarms/`.
+
+## Automatic updates and recovery (Stage 8)
+
+| Situation | What happens |
+|---|---|
+| New local day | Each fired alarm re-arms for the next day; the Prayer Times screen switches date at local midnight (checked every minute while visible). |
+| App opened | Alarms re-planned (unchanged ones untouched). |
+| Phone restarted | Alarms re-planned from saved settings, without opening the app. |
+| Clock or time-zone change | Re-planned; alarm moments follow the chosen city, not the phone. |
+| Location, method, Asr, high-latitude, adjustments or sounds changed | Re-planned automatically; only the affected alarms change. |
+| App process killed by Android | Alarms stay registered with Android; settings are saved on the phone; reopening shows the same location and times. |
+| A re-plan was interrupted | The 03:30 daily check restores the alarms. |
+| Exact-alarm permission granted later | Android tells the app; alarms are re-set as exact. |
 
 ## Permissions used
 
@@ -55,6 +75,11 @@ Code: `app/src/main/java/com/universalazan/app/alarms/`.
 | **Real reboot**: all 5 alarms back without opening the app, still exact | Pass (manual, emulator) |
 | **Phone time-zone change** (London → Tokyo): still 5 alarms at exactly the same moments | Pass (manual, emulator) |
 | Fresh install: screen shows exact alarms and notifications missing; "Allow exact alarms" opens Android's page; after granting, all 5 alarms become exact | Pass (manual, emulator) |
+| Re-planning with nothing changed: no alarm re-set, Android keeps the very same alarms | Pass (automated) |
+| Changing one prayer's sound: only that alarm is re-set | Pass (automated) |
+| Daily check exists only while alarms are on; restores alarms after they are lost | Pass (automated) |
+| **App process killed** (`am kill`): 5 alarms still registered; reopening shows London with the same times; still 5 alarms | Pass (manual, emulator) |
+| **Midnight**: clock set to 23:59:20 with Prayer Times open; at 00:00 the screen showed the next day with new times, Fajr marked next; still 5 alarms | Pass (manual, emulator) |
 
 ## Not yet tested: needs a real phone
 

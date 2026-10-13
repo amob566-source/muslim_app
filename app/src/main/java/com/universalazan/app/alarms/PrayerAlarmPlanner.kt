@@ -11,6 +11,8 @@ import com.universalazan.app.domain.prayer.PrayerTimeCalculator
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 /** One Azan to schedule. */
@@ -68,6 +70,16 @@ object PrayerAlarmPlanner {
                 .map { PlannedAlarm(prayer, it.date, it.timeOf(prayer).toInstant(), sound) }
                 .firstOrNull { it.time.isAfter(now) }
         }.sortedBy { it.time }
+    }
+
+    /** Local time of the once-a-day safety-net re-plan: night, away from most prayer times. */
+    val DAILY_CHECK_TIME: LocalTime = LocalTime.of(3, 30)
+
+    /** The next daily check after [now], at [DAILY_CHECK_TIME] in the phone's time zone. */
+    fun nextDailyCheck(now: Instant, zone: ZoneId): Instant {
+        val local = now.atZone(zone)
+        val today = local.toLocalDate().atTime(DAILY_CHECK_TIME).atZone(zone)
+        return (if (today.toInstant().isAfter(now)) today else today.plusDays(1)).toInstant()
     }
 
     /** True if an alarm for [scheduledTime] arriving at [now] is too late to play. */

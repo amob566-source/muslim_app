@@ -19,11 +19,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
+import java.time.ZoneId
 
 /**
  * Keeps the scheduled alarms in line with the saved settings. Re-plans whenever the location,
  * calculation settings, Azan sounds or the on/off switch change, and when asked to (app start,
- * an alarm firing, reboot, clock or time-zone change).
+ * an alarm firing, reboot, clock or time-zone change, and a once-a-day safety-net check).
+ * Alarms that are still correct are not touched (see PrayerAlarmScheduler).
  */
 class AlarmCoordinator(
     private val locationRepository: LocationRepository,
@@ -32,6 +34,7 @@ class AlarmCoordinator(
     private val alarmSettingsRepository: AlarmSettingsRepository,
     private val scheduler: PrayerAlarmScheduler,
     private val clock: () -> Instant = Instant::now,
+    private val zone: () -> ZoneId = ZoneId::systemDefault,
 ) {
     private val mutex = Mutex()
     private val _upcoming = MutableStateFlow<List<PlannedAlarm>>(emptyList())
@@ -54,7 +57,9 @@ class AlarmCoordinator(
         } else {
             emptyList()
         }
-        scheduler.apply(planned)
+        // The daily check only matters while there are alarms to look after.
+        val dailyCheck = if (planned.isEmpty()) null else PrayerAlarmPlanner.nextDailyCheck(clock(), zone()).toEpochMilli()
+        scheduler.apply(planned, dailyCheck)
         _upcoming.value = planned
         planned
     }

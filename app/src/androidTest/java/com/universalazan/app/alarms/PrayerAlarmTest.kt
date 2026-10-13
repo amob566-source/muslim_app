@@ -177,6 +177,74 @@ class PrayerAlarmTest {
         assertEquals(5, registeredPrayerAlarms())
     }
 
+    /** Android's internal identity of each of our pending prayer alarms, e.g. "Alarm{d6256b1". */
+    private fun prayerAlarmIds(): List<String> {
+        val lines = shell("dumpsys alarm").lines()
+        return lines.indices
+            .filter { lines[it].trim() == "tag=*walarm*:${PrayerAlarmReceiver.ACTION_PRAYER_ALARM}" }
+            .mapNotNull { Regex("""Alarm\{[0-9a-f]+""").find(lines[it - 1])?.value }
+            .sorted()
+    }
+
+    @Test
+    fun unchangedAlarmsAreNotReset() {
+        save(london)
+        // Let the automatic re-plan after saving finish first.
+        assertTrue(waitFor { testAlarmCoordinator().upcoming.value.size == 5 })
+        SystemClock.sleep(1_000)
+        reschedule()
+        val before = prayerAlarmIds()
+        assertEquals(5, before.size)
+
+        reschedule()
+        reschedule()
+        assertEquals("nothing changed, so nothing should be re-set", 0, testAlarmScheduler().lastChangeCount)
+        assertEquals("Android still holds the very same alarms", before, prayerAlarmIds())
+    }
+
+    @Test
+    fun changingOnePrayerOnlyResetsThatAlarm() {
+        save(london)
+        assertTrue(waitFor { testAlarmCoordinator().upcoming.value.size == 5 })
+        SystemClock.sleep(1_000)
+        reschedule()
+        val before = prayerAlarmIds()
+
+        runBlocking { testAzanSoundRepository().setSound(Prayer.Maghrib, AzanSound.Short) }
+        reschedule()
+        val after = prayerAlarmIds()
+        assertEquals(5, after.size)
+        assertEquals("only Maghrib's alarm should be new", 4, before.intersect(after.toSet()).size)
+    }
+
+    @Test
+    fun dailyCheckExistsOnlyWhileAlarmsAreOn() {
+        save(london)
+        reschedule()
+        assertTrue(testAlarmScheduler().isMaintenanceScheduled())
+        runBlocking { testAlarmSettingsRepository().setEnabled(false) }
+        reschedule()
+        assertFalse(testAlarmScheduler().isMaintenanceScheduled())
+    }
+
+    @Test
+    fun dailyCheckRestoresLostAlarms() {
+        save(london)
+        // Let the automatic re-plan after saving finish, so it cannot put the alarms back by itself.
+        assertTrue(waitFor { testAlarmCoordinator().upcoming.value.size == 5 })
+        SystemClock.sleep(1_000)
+        reschedule()
+        // Simulate alarms lost (e.g. a re-plan was interrupted).
+        testAlarmScheduler().cancelAll()
+        assertEquals(0, registeredPrayerAlarms())
+
+        context.sendBroadcast(
+            Intent(context, PrayerAlarmReceiver::class.java).setAction(PrayerAlarmReceiver.ACTION_DAILY_CHECK),
+        )
+        assertTrue("daily check did not restore alarms", waitFor { registeredPrayerAlarms() == 5 })
+        assertTrue(testAlarmScheduler().isMaintenanceScheduled())
+    }
+
     @Test
     fun testAlarmButtonPathPlaysThroughAlarmManager() {
         save(london)

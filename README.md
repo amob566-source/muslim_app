@@ -8,8 +8,9 @@ GPS), and prayer times are calculated on the device for that location's own date
 Calculation method, Asr (Standard or Hanafi) and the high-latitude rule can be changed in
 Settings. The Qibla direction is calculated offline from the saved location, with a live compass
 on phones that have a magnetic sensor. Each prayer can be set to the full Azan, a short Azan or
-silent, and the Azan plays automatically at prayer times (also with the screen locked), with
-alarms restored after a restart.
+silent, and the Azan plays automatically at prayer times (also with the screen locked). Alarms
+update themselves after a new day, restart, clock or time-zone change and setting changes, without
+re-setting alarms that are still correct.
 
 ## Project facts
 
@@ -164,6 +165,8 @@ The app shows this credit on the Location screen. To rebuild the file:
 
 - One alarm per prayer, always for its next time, re-planned when settings change, after a restart,
   clock or time-zone change. Missed Azans (e.g. phone was off) are never played late.
+- Alarms that are still correct are not re-set; a once-a-day check (about 03:30) restores anything
+  that went missing.
 - Plays with the screen locked, with a notification and Stop button.
 - Settings → Prayer alarms shows which phone settings need attention and has a
   "Test alarm in 1 minute" button.

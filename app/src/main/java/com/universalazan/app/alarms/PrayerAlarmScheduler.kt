@@ -13,10 +13,24 @@ import com.universalazan.app.domain.prayer.Prayer
  *
  * Each prayer has ONE fixed alarm slot (its own request code). Scheduling a prayer replaces
  * whatever was in its slot, so duplicate alarms cannot build up, and cancelling the slot removes
- * an obsolete alarm. A separate slot is used for the "test alarm" button.
+ * an obsolete alarm. Separate slots are used for the "test alarm" button and the daily check.
+ *
+ * Alarms that are still correct are left alone: the scheduler remembers what it last gave
+ * Android and only changes a slot whose time, sound or exactness differs. This memory is lost
+ * when the app process ends, which is exactly when Android may have cleared alarms anyway
+ * (restart, force stop, exact-alarm permission removed), so everything is then set again.
  */
 class PrayerAlarmScheduler(private val context: Context) {
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
+
+    private data class SlotState(val triggerAtMillis: Long, val sound: AzanSound?, val exact: Boolean)
+
+    private val applied = mutableMapOf<Int, SlotState>()
+
+    /** How many alarms were actually (re)set or cancelled by the last [apply] (used by tests). */
+    @Volatile
+    var lastChangeCount: Int = 0
+        private set
 
     /**
      * Exact alarms need the user's permission on Android 12+ (granted in system settings).
@@ -25,29 +39,69 @@ class PrayerAlarmScheduler(private val context: Context) {
     fun canScheduleExactAlarms(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) alarmManager?.canScheduleExactAlarms() == true else true
 
-    /** Makes the AlarmManager match [planned]: schedules those, cancels every other prayer slot. */
-    fun apply(planned: List<PlannedAlarm>) {
+    /**
+     * Makes the AlarmManager match [planned]: schedules those, cancels every other prayer slot.
+     * [maintenanceAtMillis] is the daily safety-net check (null to cancel it).
+     */
+    @Synchronized
+    fun apply(planned: List<PlannedAlarm>, maintenanceAtMillis: Long? = null) {
+        val exact = canScheduleExactAlarms()
+        var changes = 0
         Prayer.entries.forEach { prayer ->
+            val code = REQUEST_CODE_BASE + prayer.ordinal
             val alarm = planned.firstOrNull { it.prayer == prayer }
-            if (alarm == null) cancel(prayer) else schedule(alarm.prayer, alarm.sound, alarm.time.toEpochMilli(), isTest = false)
+            if (alarm == null) {
+                if (applied.remove(code) != null || existing(code, ACTION_PRAYER) != null) {
+                    cancel(code, ACTION_PRAYER)
+                    changes++
+                }
+            } else {
+                val wanted = SlotState(alarm.time.toEpochMilli(), alarm.sound, exact)
+                if (applied[code] != wanted) {
+                    schedulePrayer(code, alarm.prayer, alarm.sound, wanted.triggerAtMillis, isTest = false, exact = exact)
+                    applied[code] = wanted
+                    changes++
+                }
+            }
         }
+        if (maintenanceAtMillis == null) {
+            if (applied.remove(MAINTENANCE_REQUEST_CODE) != null || existing(MAINTENANCE_REQUEST_CODE, ACTION_MAINTENANCE) != null) {
+                cancel(MAINTENANCE_REQUEST_CODE, ACTION_MAINTENANCE)
+            }
+        } else {
+            // The daily check never needs to be exact; a battery-friendly inexact alarm is enough.
+            val wanted = SlotState(maintenanceAtMillis, null, exact = false)
+            if (applied[MAINTENANCE_REQUEST_CODE] != wanted) {
+                scheduleMaintenance(maintenanceAtMillis)
+                applied[MAINTENANCE_REQUEST_CODE] = wanted
+            }
+        }
+        lastChangeCount = changes
     }
 
     /** Schedules a one-off test Azan (short version) [delayMillis] from now, through the real alarm path. */
     fun scheduleTest(delayMillis: Long, nowMillis: Long = System.currentTimeMillis()) {
-        schedule(Prayer.Dhuhr, AzanSound.Short, nowMillis + delayMillis, isTest = true)
+        schedulePrayer(TEST_REQUEST_CODE, Prayer.Dhuhr, AzanSound.Short, nowMillis + delayMillis, isTest = true, exact = canScheduleExactAlarms())
     }
 
+    @Synchronized
     fun cancelAll() {
-        Prayer.entries.forEach(::cancel)
-        existing(TEST_REQUEST_CODE)?.let { alarmManager?.cancel(it); it.cancel() }
+        Prayer.entries.forEach { cancel(REQUEST_CODE_BASE + it.ordinal, ACTION_PRAYER) }
+        cancel(TEST_REQUEST_CODE, ACTION_PRAYER)
+        cancel(MAINTENANCE_REQUEST_CODE, ACTION_MAINTENANCE)
+        applied.clear()
     }
 
-    private fun schedule(prayer: Prayer, sound: AzanSound, triggerAtMillis: Long, isTest: Boolean) {
+    /** True if the slot for [prayer] currently holds an alarm (used by tests). */
+    fun isScheduled(prayer: Prayer): Boolean = existing(REQUEST_CODE_BASE + prayer.ordinal, ACTION_PRAYER) != null
+
+    /** True if the daily check is scheduled (used by tests). */
+    fun isMaintenanceScheduled(): Boolean = existing(MAINTENANCE_REQUEST_CODE, ACTION_MAINTENANCE) != null
+
+    private fun schedulePrayer(requestCode: Int, prayer: Prayer, sound: AzanSound, triggerAtMillis: Long, isTest: Boolean, exact: Boolean) {
         val manager = alarmManager ?: return
-        val requestCode = if (isTest) TEST_REQUEST_CODE else REQUEST_CODE_BASE + prayer.ordinal
         val intent = Intent(context, PrayerAlarmReceiver::class.java)
-            .setAction(PrayerAlarmReceiver.ACTION_PRAYER_ALARM)
+            .setAction(ACTION_PRAYER)
             .putExtra(PrayerAlarmReceiver.EXTRA_PRAYER, prayer.name)
             .putExtra(PrayerAlarmReceiver.EXTRA_SOUND, sound.name)
             .putExtra(PrayerAlarmReceiver.EXTRA_TIME, triggerAtMillis)
@@ -58,7 +112,7 @@ class PrayerAlarmScheduler(private val context: Context) {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-        if (canScheduleExactAlarms()) {
+        if (exact) {
             // Fires on time even in Doze (battery-saving idle) mode.
             manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         } else {
@@ -67,22 +121,33 @@ class PrayerAlarmScheduler(private val context: Context) {
         }
     }
 
-    private fun cancel(prayer: Prayer) {
-        existing(REQUEST_CODE_BASE + prayer.ordinal)?.let { alarmManager?.cancel(it); it.cancel() }
+    private fun scheduleMaintenance(triggerAtMillis: Long) {
+        val manager = alarmManager ?: return
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            MAINTENANCE_REQUEST_CODE,
+            Intent(context, PrayerAlarmReceiver::class.java).setAction(ACTION_MAINTENANCE),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
     }
 
-    private fun existing(requestCode: Int): PendingIntent? = PendingIntent.getBroadcast(
+    private fun cancel(requestCode: Int, action: String) {
+        existing(requestCode, action)?.let { alarmManager?.cancel(it); it.cancel() }
+    }
+
+    private fun existing(requestCode: Int, action: String): PendingIntent? = PendingIntent.getBroadcast(
         context,
         requestCode,
-        Intent(context, PrayerAlarmReceiver::class.java).setAction(PrayerAlarmReceiver.ACTION_PRAYER_ALARM),
+        Intent(context, PrayerAlarmReceiver::class.java).setAction(action),
         PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
     )
 
-    /** True if the slot for [prayer] currently holds an alarm (used by tests). */
-    fun isScheduled(prayer: Prayer): Boolean = existing(REQUEST_CODE_BASE + prayer.ordinal) != null
-
     companion object {
         const val REQUEST_CODE_BASE = 1000
+        const val MAINTENANCE_REQUEST_CODE = 1098
         const val TEST_REQUEST_CODE = 1099
+        private const val ACTION_PRAYER = PrayerAlarmReceiver.ACTION_PRAYER_ALARM
+        private const val ACTION_MAINTENANCE = PrayerAlarmReceiver.ACTION_DAILY_CHECK
     }
 }

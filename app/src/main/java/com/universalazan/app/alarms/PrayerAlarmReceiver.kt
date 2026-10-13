@@ -12,12 +12,24 @@ import java.time.Instant
 
 /**
  * Called by AlarmManager at a prayer time. Starts the Azan (unless the alarm is late, e.g. the
- * phone was off) and then schedules the next alarms.
+ * phone was off) and then schedules the next alarms. Also receives the once-a-day check.
  */
 class PrayerAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != ACTION_PRAYER_ALARM) return
         val container = (context.applicationContext as UniversalAzanApp).container
+        if (intent.action == ACTION_DAILY_CHECK) {
+            // Safety net: re-plan once a day in case an earlier re-plan was interrupted.
+            val pending = goAsync()
+            container.appScope.launch {
+                try {
+                    container.alarmCoordinator.reschedule()
+                } finally {
+                    pending.finish()
+                }
+            }
+            return
+        }
+        if (intent.action != ACTION_PRAYER_ALARM) return
         val prayer = Prayer.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_PRAYER) } ?: return
         val sound = AzanSound.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_SOUND) } ?: AzanSound.Full
         val scheduled = Instant.ofEpochMilli(intent.getLongExtra(EXTRA_TIME, 0L))
@@ -48,6 +60,7 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_PRAYER_ALARM = "com.universalazan.app.action.PRAYER_ALARM"
+        const val ACTION_DAILY_CHECK = "com.universalazan.app.action.DAILY_CHECK"
         const val EXTRA_PRAYER = "prayer"
         const val EXTRA_SOUND = "sound"
         const val EXTRA_TIME = "time"
