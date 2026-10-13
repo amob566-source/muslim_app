@@ -40,12 +40,13 @@ import com.universalazan.app.R
 import com.universalazan.app.ui.location.LocationRoute
 import com.universalazan.app.ui.prayer.PrayerTimesRoute
 import com.universalazan.app.ui.qibla.QiblaRoute
+import com.universalazan.app.ui.settings.AlarmsRoute
 import com.universalazan.app.ui.settings.AzanSoundsRoute
 import com.universalazan.app.ui.settings.CalculationSettingsRoute
 import com.universalazan.app.ui.settings.SettingsRoute
 
 /** Screens shown on top of a section, with their own back button. */
-private enum class Overlay { Location, CalculationSettings, AzanSounds }
+private enum class Overlay { Location, CalculationSettings, AzanSounds, Alarms }
 
 /** Width from which a side rail replaces the bottom bar (landscape phones, tablets). */
 private val WideLayoutMinWidth = 600.dp
@@ -66,6 +67,7 @@ fun AppRoot(modifier: Modifier = Modifier) {
     val openLocation = { overlay = Overlay.Location }
     val openCalculationSettings = { overlay = Overlay.CalculationSettings }
     val openAzanSounds = { overlay = Overlay.AzanSounds }
+    val openAlarms = { overlay = Overlay.Alarms }
     val closeOverlay = { overlay = null }
 
     // Back from Qibla or Settings returns to Prayer Times; back from Prayer Times leaves the app.
@@ -99,6 +101,7 @@ fun AppRoot(modifier: Modifier = Modifier) {
                     Overlay.Location -> LocationRoute(onClose = closeOverlay, modifier = contentModifier)
                     Overlay.CalculationSettings -> CalculationSettingsRoute(onClose = closeOverlay, modifier = contentModifier)
                     Overlay.AzanSounds -> AzanSoundsRoute(onClose = closeOverlay, modifier = contentModifier)
+                    Overlay.Alarms -> AlarmsRoute(onClose = closeOverlay, modifier = contentModifier)
                     null -> when (current) {
                         AppDestination.PrayerTimes -> PrayerTimesRoute(
                             onChooseLocation = openLocation,
@@ -113,6 +116,7 @@ fun AppRoot(modifier: Modifier = Modifier) {
                             onOpenLocation = openLocation,
                             onOpenCalculationSettings = openCalculationSettings,
                             onOpenAzanSounds = openAzanSounds,
+                            onOpenAlarms = openAlarms,
                             modifier = contentModifier,
                         )
                     }

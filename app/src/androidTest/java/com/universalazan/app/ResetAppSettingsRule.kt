@@ -1,7 +1,10 @@
 package com.universalazan.app
 
 import androidx.test.platform.app.InstrumentationRegistry
+import com.universalazan.app.alarms.AlarmCoordinator
+import com.universalazan.app.alarms.PrayerAlarmScheduler
 import com.universalazan.app.audio.AzanPlayer
+import com.universalazan.app.data.preferences.AlarmSettingsRepository
 import com.universalazan.app.data.preferences.AzanSoundRepository
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
 import com.universalazan.app.data.preferences.LocationRepository
@@ -23,9 +26,19 @@ fun testAzanSoundRepository(): AzanSoundRepository = container.azanSoundReposito
 /** The app's shared Azan player. */
 fun testAzanPlayer(): AzanPlayer = container.azanPlayer
 
+fun testAlarmSettingsRepository(): AlarmSettingsRepository = container.alarmSettingsRepository
+fun testAlarmCoordinator(): AlarmCoordinator = container.alarmCoordinator
+fun testAlarmScheduler(): PrayerAlarmScheduler = container.alarmScheduler
+
+/** Runs an adb-style shell command on the device (e.g. to grant a permission for a test). */
+fun shell(command: String): String {
+    val pfd = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+    return java.io.FileInputStream(pfd.fileDescriptor).bufferedReader().use { it.readText() }.also { pfd.close() }
+}
+
 /**
- * Removes the saved location, resets calculation and sound settings and stops any sound,
- * before (and after) a test, so every test starts the same way.
+ * Removes the saved location, resets calculation, sound and alarm settings, stops any sound and
+ * cancels alarms, before (and after) a test, so every test starts the same way.
  */
 class ResetAppSettingsRule : ExternalResource() {
     override fun before() = reset()
@@ -37,6 +50,9 @@ class ResetAppSettingsRule : ExternalResource() {
             testLocationRepository().clear()
             testCalculationSettingsRepository().resetToDefaults()
             testAzanSoundRepository().resetToDefaults()
+            testAlarmSettingsRepository().resetToDefaults()
+            testAlarmCoordinator().reschedule()
         }
+        testAlarmScheduler().cancelAll()
     }
 }

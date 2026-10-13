@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.universalazan.app.UniversalAzanApp
 import com.universalazan.app.audio.AzanSoundSettings
 import com.universalazan.app.data.locations.SavedLocation
+import com.universalazan.app.data.preferences.AlarmSettingsRepository
 import com.universalazan.app.data.preferences.AzanSoundRepository
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
 import com.universalazan.app.data.preferences.LocationRepository
@@ -21,6 +22,7 @@ class SettingsViewModel(
     locationRepository: LocationRepository,
     calculationSettingsRepository: CalculationSettingsRepository,
     azanSoundRepository: AzanSoundRepository,
+    alarmSettingsRepository: AlarmSettingsRepository,
 ) : ViewModel() {
 
     val currentLocation: StateFlow<SavedLocation?> = locationRepository.savedLocation
@@ -35,6 +37,10 @@ class SettingsViewModel(
         .catch { emit(AzanSoundSettings()) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AzanSoundSettings())
 
+    val alarmsEnabled: StateFlow<Boolean> = alarmSettingsRepository.enabled
+        .catch { emit(true) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
+
     companion object {
         val Factory = viewModelFactory {
             initializer {
@@ -43,6 +49,7 @@ class SettingsViewModel(
                     container.locationRepository,
                     container.calculationSettingsRepository,
                     container.azanSoundRepository,
+                    container.alarmSettingsRepository,
                 )
             }
         }

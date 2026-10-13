@@ -5,6 +5,15 @@
     "Use current location". Precise (fine) is needed for GPS, the only source that works
     without internet. Coarse alone is allowed; the app then tries other location sources.
     No background location is ever requested. The location never leaves the device.
+  - POST_NOTIFICATIONS: shows the "Azan playing" notification with a Stop button. Asked for in
+    the app (Android 13+); the Azan still plays without it, but the notification is hidden.
+  - SCHEDULE_EXACT_ALARM: lets the Azan start at the exact minute. Granted by the user in system
+    settings (the app links there). Without it, Android may deliver alarms late.
+  - RECEIVE_BOOT_COMPLETED: alarms are cleared when the phone restarts; this lets the app
+    schedule the next prayer times again.
+  - FOREGROUND_SERVICE / FOREGROUND_SERVICE_MEDIA_PLAYBACK: lets the Azan keep playing while the
+    app is closed or the screen is locked, with a visible notification.
+  - WAKE_LOCK: keeps the processor awake while the Azan plays with the screen off.
   Backup: settings include the user's location, so allowBackup="false" (Android 11 and
   older) and dataExtractionRules (Android 12+) keep all app data out of cloud backup and
   phone-to-phone transfer. This app keeps all data on the device.
@@ -13,6 +22,12 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- Location hardware is optional: users can always pick a city or type coordinates. -->
     <uses-feature
@@ -37,13 +52,39 @@
         android:theme="@style/Theme.UniversalAzan">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Receives the app's own prayer alarms from AlarmManager. Not reachable by other apps. -->
+        <receiver
+            android:name=".alarms.PrayerAlarmReceiver"
+            android:exported="false" />
+
+        <!-- Re-schedules alarms after restart, clock/time-zone change, app update or permission change.
+             These are protected system broadcasts that other apps cannot send. -->
+        <receiver
+            android:name=".alarms.SystemEventsReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Plays the Azan in the background with a notification. -->
+        <service
+            android:name=".alarms.AzanPlaybackService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
     </application>
 
 </manifest>

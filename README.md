@@ -8,8 +8,8 @@ GPS), and prayer times are calculated on the device for that location's own date
 Calculation method, Asr (Standard or Hanafi) and the high-latitude rule can be changed in
 Settings. The Qibla direction is calculated offline from the saved location, with a live compass
 on phones that have a magnetic sensor. Each prayer can be set to the full Azan, a short Azan or
-silent, and the sounds can be tested in Settings. Alarms that play the Azan at prayer times are not
-implemented yet.
+silent, and the Azan plays automatically at prayer times (also with the screen locked), with
+alarms restored after a restart.
 
 ## Project facts
 
@@ -44,13 +44,14 @@ app/src/main/java/com/universalazan/app/
   domain/qibla/            Qibla bearing and distance to the Kaaba (pure Kotlin)
   sensors/                 compass sensors, heading maths, magnetic-to-true-north correction
   audio/                   Azan sound choices and the shared Azan player
+  alarms/                  prayer alarm planning, scheduling, receivers and playback service
   data/locations/          saved-location model, offline city list and search, GPS reader
   data/preferences/        saves settings on the device (DataStore)
   ui/navigation/           the three sections and the bottom bar / side rail
   ui/location/             Location screen and time zone picker
   ui/prayer/               Prayer Times screen and its states (loading, error, ready)
   ui/qibla/                Qibla screen, bearing and live compass dial
-  ui/settings/             Settings, Prayer calculation and Azan sounds screens
+  ui/settings/             Settings, Prayer calculation, Azan sounds and Prayer alarms screens
   ui/common/               shared screen layout
   ui/theme/                colours (green and gold, light and dark)
 ```
@@ -89,6 +90,11 @@ The debug APK is created at `app\build\outputs\apk\debug\app-debug.apk`.
 |---|---|
 | `ACCESS_FINE_LOCATION` | Only requested when you tap **Use current location**. Precise location is needed for GPS, the only location source that works without internet. |
 | `ACCESS_COARSE_LOCATION` | Requested together with the one above. Android lets you choose "approximate" instead; the app then tries Android's other location sources. |
+| `SCHEDULE_EXACT_ALARM` | Starts the Azan at the exact minute. You allow it in system settings (Settings → Prayer alarms → Allow exact alarms). |
+| `POST_NOTIFICATIONS` | Shows the "Azan playing" notification with a Stop button. Asked for in the app. |
+| `RECEIVE_BOOT_COMPLETED` | Schedules the next Azans again after the phone restarts. |
+| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | Keeps the Azan playing while the app is closed or the screen is locked. |
+| `WAKE_LOCK` | Keeps playback going with the screen off. |
 | `com.universalazan.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | Added automatically by the AndroidX Core library. Private to this app; gives no access to any data or hardware. |
 
 There is **no internet permission** and **no background location**. Refusing location
@@ -153,6 +159,15 @@ The app shows this credit on the Location screen. To rebuild the file:
 - The full Fajr Azan is only used for Fajr; the other prayers use a version without
   "aṣ-ṣalātu khayrun mina n-nawm".
 - Details, file sources and how to replace the recordings: [docs/azan-audio.md](docs/azan-audio.md).
+
+## Prayer alarms
+
+- One alarm per prayer, always for its next time, re-planned when settings change, after a restart,
+  clock or time-zone change. Missed Azans (e.g. phone was off) are never played late.
+- Plays with the screen locked, with a notification and Stop button.
+- Settings → Prayer alarms shows which phone settings need attention and has a
+  "Test alarm in 1 minute" button.
+- How it works, what was tested and its limits: [docs/alarms.md](docs/alarms.md).
 
 ## Internet use
 

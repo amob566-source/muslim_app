@@ -208,7 +208,7 @@
     <string name="azan_sound_short">Short</string>
     <string name="azan_sound_silent">Silent</string>
     <string name="azan_sounds_title">Azan sounds</string>
-    <string name="azan_sounds_intro">Choose what plays at each prayer time. Alarms that play these sounds at the right time will be added in the next stage.</string>
+    <string name="azan_sounds_intro">Choose what plays at each prayer time. Turn the automatic Azan on or off in Settings, Prayer alarms.</string>
     <string name="azan_sounds_fajr_note">Fajr uses the full Fajr Azan. The other prayers use a version without \"aṣ-ṣalātu khayrun mina n-nawm\", which is only said at Fajr.</string>
     <string name="azan_sounds_recording">Recording</string>
     <string name="azan_sounds_test_tone_warning">The app currently contains test tones, not an Azan recording.</string>
@@ -225,4 +225,42 @@
     <string name="azan_error_focus">Another app (for example a phone call) is using the audio. Try again when it has finished.</string>
     <string name="azan_reset">Reset to defaults</string>
     <string name="settings_azan_current">Full: %1$d · Short: %2$d · Silent: %3$d</string>
+
+    <!-- Prayer alarms -->
+    <string name="alarm_channel_name">Azan</string>
+    <string name="alarm_channel_description">Shown while the Azan is playing, with a button to stop it.</string>
+    <string name="alarm_notification_title">Azan: %1$s</string>
+    <string name="alarm_test_notification_title">Test Azan</string>
+    <string name="alarm_notification_text">Prayer time %1$s. Tap Stop to end the Azan.</string>
+    <string name="alarm_notification_stop">Stop</string>
+
+    <string name="settings_alarms_title">Prayer alarms</string>
+    <string name="settings_alarms_summary">Play the Azan automatically at prayer times</string>
+    <string name="settings_alarms_on">On</string>
+    <string name="settings_alarms_off">Off</string>
+
+    <string name="alarms_title">Prayer alarms</string>
+    <string name="alarms_switch">Play the Azan at prayer times</string>
+    <string name="alarms_switch_description">Uses the sound chosen for each prayer in Azan sounds. Silent prayers are skipped.</string>
+    <string name="alarms_no_location">Choose a location first. Alarms are scheduled from the prayer times for your location.</string>
+    <string name="alarms_checks_title">Phone settings</string>
+    <string name="alarms_notifications_ok">Notifications: allowed</string>
+    <string name="alarms_notifications_missing">Notifications are off. The Azan still plays, but you will not see the notification with the Stop button.</string>
+    <string name="alarms_notifications_button">Allow notifications</string>
+    <string name="alarms_exact_ok">Exact alarms: allowed</string>
+    <string name="alarms_exact_missing">Exact alarms are not allowed. Android may start the Azan late, or block it from starting at all. Please allow \"Alarms and reminders\" for this app.</string>
+    <string name="alarms_exact_button">Allow exact alarms</string>
+    <string name="alarms_battery_ok">Battery: not restricted</string>
+    <string name="alarms_battery_restricted">Battery optimisation is on for this app. Usually alarms still work, but some phones stop background apps. If an Azan does not play, set this app to \"Unrestricted\" in battery settings.</string>
+    <string name="alarms_battery_button">Open battery settings</string>
+    <string name="alarms_volume_ok">Alarm volume: on</string>
+    <string name="alarms_volume_muted">The alarm volume is at zero, so the Azan will not be heard. Turn up the alarm volume in sound settings.</string>
+    <string name="alarms_upcoming_title">Next Azans</string>
+    <string name="alarms_upcoming_none">No Azan is scheduled.</string>
+    <string name="alarms_upcoming_item">%1$s, %2$s</string>
+    <string name="alarms_test_button">Test alarm in 1 minute</string>
+    <string name="alarms_test_explanation">Sets a one-off short Azan through the real alarm system. Lock your phone and wait to check it plays.</string>
+    <string name="alarms_test_set">Test alarm set for %1$s.</string>
+    <string name="alarms_limits_title">Things that can stop an Azan</string>
+    <string name="alarms_limits_text">Android cannot guarantee an alarm in every situation. The Azan may not be heard if: the alarm volume is at zero; Do Not Disturb is set to block alarms; the phone is switched off; permissions above are turned off; the phone maker\'s battery saver closes the app; or another app or a phone call is using the audio. An Azan that was missed (for example because the phone was off) is not played late.</string>
 </resources>

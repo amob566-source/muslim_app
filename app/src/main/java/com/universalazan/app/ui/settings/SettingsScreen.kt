@@ -35,12 +35,14 @@ fun SettingsRoute(
     onOpenLocation: () -> Unit,
     onOpenCalculationSettings: () -> Unit,
     onOpenAzanSounds: () -> Unit,
+    onOpenAlarms: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
 ) {
     val currentLocation by viewModel.currentLocation.collectAsStateWithLifecycle()
     val calculationSettings by viewModel.calculationSettings.collectAsStateWithLifecycle()
     val azanSounds by viewModel.azanSounds.collectAsStateWithLifecycle()
+    val alarmsEnabled by viewModel.alarmsEnabled.collectAsStateWithLifecycle()
     SettingsScreen(
         currentLocation = currentLocation,
         calculationSettings = calculationSettings,
@@ -48,6 +50,8 @@ fun SettingsRoute(
         onOpenLocation = onOpenLocation,
         onOpenCalculationSettings = onOpenCalculationSettings,
         onOpenAzanSounds = onOpenAzanSounds,
+        alarmsEnabled = alarmsEnabled,
+        onOpenAlarms = onOpenAlarms,
         modifier = modifier,
     )
 }
@@ -62,6 +66,8 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     azanSounds: AzanSoundSettings = AzanSoundSettings(),
     onOpenAzanSounds: () -> Unit = {},
+    alarmsEnabled: Boolean = true,
+    onOpenAlarms: () -> Unit = {},
 ) {
     ScreenContainer(title = stringResource(R.string.nav_settings), modifier = modifier) {
         SettingsLink(
@@ -95,6 +101,13 @@ fun SettingsScreen(
             ),
             testTag = SETTINGS_AZAN_TAG,
             onClick = onOpenAzanSounds,
+        )
+        SettingsLink(
+            titleRes = R.string.settings_alarms_title,
+            summaryRes = R.string.settings_alarms_summary,
+            current = stringResource(if (alarmsEnabled) R.string.settings_alarms_on else R.string.settings_alarms_off),
+            testTag = SETTINGS_ALARMS_TAG,
+            onClick = onOpenAlarms,
         )
         Text(
             text = stringResource(R.string.settings_other_coming_later),
@@ -160,6 +173,7 @@ private fun SettingsGroup(@StringRes titleRes: Int, @StringRes summaryRes: Int) 
 const val SETTINGS_LOCATION_TAG = "settings_location"
 const val SETTINGS_CALCULATION_TAG = "settings_calculation"
 const val SETTINGS_AZAN_TAG = "settings_azan"
+const val SETTINGS_ALARMS_TAG = "settings_alarms"
 
 @Preview(showBackground = true)
 @Composable

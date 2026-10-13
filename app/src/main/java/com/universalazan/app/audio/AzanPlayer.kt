@@ -6,6 +6,7 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.PowerManager
 import androidx.annotation.MainThread
 import com.universalazan.app.domain.prayer.Prayer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,6 +72,8 @@ class AzanPlayer(private val context: Context) {
         val mediaPlayer = MediaPlayer()
         try {
             mediaPlayer.setAudioAttributes(attributes)
+            // Keeps the processor awake during playback, so it does not stop with the screen off.
+            mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK)
             fileDescriptor.use { mediaPlayer.setDataSource(it.fileDescriptor, it.startOffset, it.length) }
         } catch (_: Exception) {
             mediaPlayer.release()
