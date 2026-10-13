@@ -36,7 +36,7 @@ class AccessibilityTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule).around(AppReadyRule(composeRule))
 
     @Before
     fun setUp() {

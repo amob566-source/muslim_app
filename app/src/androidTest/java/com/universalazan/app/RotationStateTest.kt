@@ -35,10 +35,11 @@ class RotationStateTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule).around(AppReadyRule(composeRule))
 
     private fun rotate() {
         composeRule.activityRule.scenario.recreate()
+        composeRule.waitForAppReady()
         composeRule.waitForIdle()
     }
 

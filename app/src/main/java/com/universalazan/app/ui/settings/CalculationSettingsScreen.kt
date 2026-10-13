@@ -181,10 +181,10 @@ private fun OutlinedIconButtonText(text: String, description: String, enabled: B
         contentPadding = PaddingValues(0.dp),
         modifier = Modifier
             .size(48.dp)
-            .testTag(tag)
-            .semantics { contentDescription = description },
+            .testTag(tag),
     ) {
-        Text(text, style = MaterialTheme.typography.titleLarge)
+        // Label on the inner text so it merges into the button's own accessibility node.
+        Text(text, style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { contentDescription = description })
     }
 }
 

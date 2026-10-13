@@ -23,7 +23,7 @@ class AppNavigationTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule).around(AppReadyRule(composeRule))
 
     private fun nav(destination: AppDestination) = composeRule.onNodeWithTag(navTestTag(destination))
 
@@ -86,6 +86,7 @@ class AppNavigationTest {
         nav(AppDestination.Qibla).performClick()
         // Same as what happens when the screen is rotated.
         composeRule.activityRule.scenario.recreate()
+        composeRule.waitForAppReady()
         nav(AppDestination.Qibla).assertIsSelected()
         composeRule.onNodeWithText("Qibla direction").assertIsDisplayed()
     }

@@ -30,7 +30,7 @@ class AzanSoundsFlowTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule).around(AppReadyRule(composeRule))
 
     private fun openAzanSounds() {
         composeRule.onNodeWithTag(navTestTag(AppDestination.Settings)).performClick()
@@ -57,6 +57,7 @@ class AzanSoundsFlowTest {
             runBlocking { testAzanSoundRepository().settings.first().soundFor(Prayer.Dhuhr) } == AzanSound.Short
         }
         composeRule.activityRule.scenario.recreate()
+        composeRule.waitForAppReady()
         composeRule.onNodeWithTag(soundChipTag(Prayer.Dhuhr, AzanSound.Short)).performScrollTo().assertIsSelected()
     }
 

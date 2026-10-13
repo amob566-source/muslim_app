@@ -143,4 +143,16 @@ class HeadingMathTest {
         assertEquals(356.0, west.trueHeading, 1e-9)
         assertTrue(west.interference)
     }
+
+    @Test
+    fun liveHeadingIsRoundedToHalfDegreesSoNoiseDoesNotRedraw() {
+        val a = QiblaViewModel.liveState(CompassSample(100.11, CompassAccuracy.High, 48f), declination = 0.0)
+        val b = QiblaViewModel.liveState(CompassSample(100.19, CompassAccuracy.High, 48f), declination = 0.0)
+        assertEquals(100.0, a.trueHeading, 0.0)
+        // Tiny sensor noise gives an identical state, so the screen is not redrawn.
+        assertEquals(a, b)
+        assertEquals(100.5, QiblaViewModel.liveState(CompassSample(100.4, CompassAccuracy.High, 48f), 0.0).trueHeading, 0.0)
+        // 359.9 rounds to 360, which must wrap to 0.
+        assertEquals(0.0, QiblaViewModel.liveState(CompassSample(359.9, CompassAccuracy.High, 48f), 0.0).trueHeading, 0.0)
+    }
 }

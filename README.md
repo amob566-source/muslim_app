@@ -191,6 +191,10 @@ All settings are saved on the phone (DataStore) and survive restarts.
 Accessibility (automated checks on every screen), large text, small and large screens, rotation,
 error messages and alarm-restriction tips were reviewed in Stage 10: [docs/quality-review.md](docs/quality-review.md).
 
+Offline operation (20 scenarios with airplane mode on, plus the full automated suite offline) was
+verified in Stage 11: [docs/offline-test-plan.md](docs/offline-test-plan.md). The app has no internet
+permission and no networking, analytics or advertising libraries.
+
 ## Internet use
 
 Normal use of the app needs no internet. Internet is only needed to install the app, to download

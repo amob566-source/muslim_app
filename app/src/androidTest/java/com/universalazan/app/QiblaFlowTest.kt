@@ -26,7 +26,7 @@ class QiblaFlowTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule).around(AppReadyRule(composeRule))
 
     private fun waitForText(text: String, substring: Boolean = false) = composeRule.waitUntil(5_000) {
         composeRule.onAllNodesWithText(text, substring = substring).fetchSemanticsNodes().isNotEmpty()

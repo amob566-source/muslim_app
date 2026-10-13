@@ -105,7 +105,9 @@ class QiblaViewModel(
         /** Pure function so it can be tested without sensors. */
         fun liveState(sample: CompassSample, declination: Double): CompassUiState.Live =
             CompassUiState.Live(
-                trueHeading = normalizeDegrees(sample.magneticHeading + declination),
+                // Rounded to 0.5°: finer than the screen shows or a phone compass can measure, and
+                // it stops the dial being redrawn ~15 times a second for invisible sensor noise.
+                trueHeading = normalizeDegrees(Math.round((sample.magneticHeading + declination) * 2) / 2.0),
                 accuracy = sample.accuracy,
                 interference = sample.fieldStrengthMicroTesla?.let(HeadingMath::isMagneticInterference) ?: false,
                 declination = declination,

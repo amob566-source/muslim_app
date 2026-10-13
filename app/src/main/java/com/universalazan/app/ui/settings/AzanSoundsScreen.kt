@@ -152,17 +152,22 @@ private fun PrayerSoundCard(
                 )
                 if (isPlayingThis) {
                     val stopDescription = stringResource(R.string.azan_test_stop_description, prayerName)
-                    Button(onClick = onStop, modifier = Modifier.semantics { contentDescription = stopDescription }) {
-                        Text(stringResource(R.string.azan_test_stop))
+                    Button(onClick = onStop) {
+                        Text(
+                            text = stringResource(R.string.azan_test_stop),
+                            modifier = Modifier.semantics { contentDescription = stopDescription },
+                        )
                     }
                 } else {
                     val playDescription = stringResource(R.string.azan_test_play_description, prayerName)
                     OutlinedButton(
                         onClick = onTest,
                         enabled = sound != AzanSound.Silent,
-                        modifier = Modifier.semantics { contentDescription = playDescription },
                     ) {
-                        Text(stringResource(R.string.azan_test_play))
+                        Text(
+                            text = stringResource(R.string.azan_test_play),
+                            modifier = Modifier.semantics { contentDescription = playDescription },
+                        )
                     }
                 }
             }

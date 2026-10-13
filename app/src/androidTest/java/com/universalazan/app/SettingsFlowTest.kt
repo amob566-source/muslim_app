@@ -43,7 +43,7 @@ class SettingsFlowTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule).around(AppReadyRule(composeRule))
 
     private val london = SavedLocation("London", 51.5074, -0.1278, "Europe/London", LocationSource.City)
 
@@ -109,6 +109,7 @@ class SettingsFlowTest {
         composeRule.waitUntil(5_000) { runBlocking { testGeneralSettingsRepository().settings.first().theme } == ThemeSetting.Dark }
         // Still selected after the screen is recreated (e.g. rotation).
         composeRule.activityRule.scenario.recreate()
+        composeRule.waitForAppReady()
         composeRule.onNodeWithTag(generalChipTag(ThemeSetting.Dark)).performScrollTo().assertIsSelected()
     }
 

@@ -38,7 +38,7 @@ class LocationFlowTest {
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule
-    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule)
+    val rules: RuleChain = RuleChain.outerRule(ResetAppSettingsRule()).around(composeRule).around(AppReadyRule(composeRule))
 
     private fun waitForText(text: String, timeoutMs: Long = 5_000) = composeRule.waitUntil(timeoutMs) {
         composeRule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
@@ -110,6 +110,7 @@ class LocationFlowTest {
         }
         waitForText("London")
         composeRule.activityRule.scenario.recreate()
+        composeRule.waitForAppReady()
         waitForText("London")
         composeRule.onNodeWithText("Time zone: Europe/London").assertIsDisplayed()
     }

@@ -8,13 +8,16 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 
 /** Runs on an emulator or phone: checks the app launches and shows its title. */
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
+    private val composeRule = createAndroidComposeRule<MainActivity>()
+
     @get:Rule
-    val composeRule = createAndroidComposeRule<MainActivity>()
+    val rules: RuleChain = RuleChain.outerRule(composeRule).around(AppReadyRule(composeRule))
 
     @Test
     fun packageNameIsCorrect() {
