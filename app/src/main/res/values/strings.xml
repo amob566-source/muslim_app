@@ -32,9 +32,6 @@
 
     <!-- Qibla screen -->
     <string name="qibla_direction_label">Qibla direction</string>
-    <string name="qibla_not_available">Not available yet</string>
-    <string name="qibla_not_available_hint">Choose a location first. The direction to the Kaaba is calculated from your location.</string>
-    <string name="qibla_compass_coming">The live compass will be added in a later stage.</string>
 
     <!-- Settings screen -->
     <string name="settings_location_title">Location</string>
@@ -167,4 +164,18 @@
     <string name="calc_reset">Reset to defaults</string>
     <string name="calc_adjustments_later">Per-prayer minute adjustments will be added to Settings in a later stage.</string>
     <string name="settings_calculation_current">%1$s · Asr: %2$s</string>
+
+    <!-- Qibla screen -->
+    <string name="qibla_no_location">No location selected</string>
+    <string name="qibla_no_location_hint">Choose a location first. The direction to the Kaaba is calculated from your location, without internet or GPS.</string>
+    <string name="qibla_for_location">For %1$s</string>
+    <string name="qibla_bearing">%1$s°</string>
+    <string name="qibla_bearing_spoken">Qibla direction %1$s degrees, %2$s</string>
+    <string name="qibla_from_true_north">Clockwise from true north (%1$s)</string>
+    <string name="qibla_distance">%1$s km to the Kaaba in Makkah</string>
+    <string name="qibla_at_kaaba">You are at the Kaaba, so there is no single direction to face.</string>
+    <string name="qibla_antipode">This place is on the exact opposite side of the Earth from the Kaaba, so every direction leads to it equally.</string>
+    <string name="qibla_invalid_coordinates">The saved coordinates are not valid. Please choose your location again.</string>
+    <string name="qibla_true_north_note">This bearing is measured from true (geographic) north. An ordinary magnetic compass points to magnetic north, which can differ by several degrees depending on where you are.</string>
+    <string name="qibla_compass_coming">A live compass that turns with your phone will be added in the next stage.</string>
 </resources>

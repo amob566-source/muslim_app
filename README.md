@@ -6,7 +6,8 @@ No accounts, no ads, no analytics, no internet needed for normal use.
 **Current status:** Stage 3. The user can choose a location (city search, typed coordinates or
 GPS), and prayer times are calculated on the device for that location's own date and time zone.
 Calculation method, Asr (Standard or Hanafi) and the high-latitude rule can be changed in
-Settings. Qibla, Azan audio and alarms are not implemented yet.
+Settings. The Qibla direction is calculated offline from the saved location and shown in
+degrees. The live compass, Azan audio and alarms are not implemented yet.
 
 ## Project facts
 
@@ -38,12 +39,13 @@ app/src/main/java/com/universalazan/app/
   UniversalAzanApp.kt      creates shared objects (AppContainer)
   domain/location/         coordinate checking and time zone helpers (pure Kotlin)
   domain/prayer/           prayer-time calculation with the Adhan library (pure Kotlin)
+  domain/qibla/            Qibla bearing and distance to the Kaaba (pure Kotlin)
   data/locations/          saved-location model, offline city list and search, GPS reader
   data/preferences/        saves settings on the device (DataStore)
   ui/navigation/           the three sections and the bottom bar / side rail
   ui/location/             Location screen and time zone picker
   ui/prayer/               Prayer Times screen and its states (loading, error, ready)
-  ui/qibla/                Qibla screen
+  ui/qibla/                Qibla screen (bearing in degrees)
   ui/settings/             Settings screen and Prayer calculation settings
   ui/common/               shared screen layout
   ui/theme/                colours (green and gold, light and dark)
@@ -125,6 +127,14 @@ The app shows this credit on the Location screen. To rebuild the file:
   cannot be calculated.
 - How the results were checked against official and independent timetables, and every difference
   found, is in [docs/prayer-time-validation.md](docs/prayer-time-validation.md).
+
+## Qibla direction
+
+- Calculated on the phone from the saved coordinates: no GPS or internet needed.
+- Shown in degrees clockwise from **true** north, with a compass point (e.g. 119.0° ESE) and the
+  distance to the Kaaba.
+- Checked against JAKIM's official bearing and independent calculations; see
+  [docs/qibla-validation.md](docs/qibla-validation.md).
 
 ## Internet use
 

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.universalazan.app.R
 import com.universalazan.app.ui.location.LocationRoute
 import com.universalazan.app.ui.prayer.PrayerTimesRoute
-import com.universalazan.app.ui.qibla.QiblaScreen
+import com.universalazan.app.ui.qibla.QiblaRoute
 import com.universalazan.app.ui.settings.CalculationSettingsRoute
 import com.universalazan.app.ui.settings.SettingsRoute
 
@@ -102,7 +102,7 @@ fun AppRoot(modifier: Modifier = Modifier) {
                             onOpenCalculationSettings = openCalculationSettings,
                             modifier = contentModifier,
                         )
-                        AppDestination.Qibla -> QiblaScreen(
+                        AppDestination.Qibla -> QiblaRoute(
                             onChooseLocation = openLocation,
                             modifier = contentModifier,
                         )
