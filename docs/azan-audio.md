@@ -32,7 +32,14 @@ Each folder also has `values/bundled_audio.xml`, which describes the recording s
   - `azan_full_fajr.m4a`: whole recording from 1.0 s, fade-out at the end. 4 min 12 s, about 2.0 MB.
   - `azan_full.m4a`: the same with 179.5 s to 220.8 s removed (the two "aṣ-ṣalātu khayrun mina n-nawm"
     phrases), joined with a 0.6 s crossfade. 3 min 30 s, about 1.7 MB.
-  - `azan_short.m4a`: 1.0 s to 21.0 s (first "Allāhu akbar, Allāhu akbar"), 1.2 s fade-out. 20 s, 160 KB.
+  - `azan_short.m4a`: **replaced on 13 Oct 2026** by a separate clip the owner provided
+    (`audio_source/short azan.m4a`, made in Clipchamp; AAC, stereo, 48 kHz, 192 kbps, 20.8 s, about 500 KB),
+    after the first short version was reported to sound "poppy". The clip was copied into the app
+    without re-encoding (audio checked bit-identical). The earlier version (1.0 s to 21.0 s of the
+    full recording, mono 64 kbps) is kept in `audio_source/previous/`.
+    Measurements of the earlier version found no clipping, no clicks beyond one faint click present in
+    the original recording, and no playback underruns on the emulator; the cause of the popping was
+    not identified (possibly emulator audio on Windows).
 - The cut points were found from the quiet gaps between phrases (14 phrases, matching the Fajr Azan).
   They were not checked by ear by the developer tools; listen to confirm.
 
