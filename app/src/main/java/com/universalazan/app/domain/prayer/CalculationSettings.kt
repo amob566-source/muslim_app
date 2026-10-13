@@ -58,11 +58,36 @@ data class PrayerAdjustments(
         }
     }
 
+    fun minutesFor(time: AdjustableTime): Int = when (time) {
+        AdjustableTime.Fajr -> fajr
+        AdjustableTime.Sunrise -> sunrise
+        AdjustableTime.Dhuhr -> dhuhr
+        AdjustableTime.Asr -> asr
+        AdjustableTime.Maghrib -> maghrib
+        AdjustableTime.Isha -> isha
+    }
+
+    /** A copy with [time] changed by [deltaMinutes], kept within the allowed range. */
+    fun changedBy(time: AdjustableTime, deltaMinutes: Int): PrayerAdjustments {
+        val value = (minutesFor(time) + deltaMinutes).coerceIn(MIN_MINUTES, MAX_MINUTES)
+        return when (time) {
+            AdjustableTime.Fajr -> copy(fajr = value)
+            AdjustableTime.Sunrise -> copy(sunrise = value)
+            AdjustableTime.Dhuhr -> copy(dhuhr = value)
+            AdjustableTime.Asr -> copy(asr = value)
+            AdjustableTime.Maghrib -> copy(maghrib = value)
+            AdjustableTime.Isha -> copy(isha = value)
+        }
+    }
+
     companion object {
         const val MIN_MINUTES = -60
         const val MAX_MINUTES = 60
     }
 }
+
+/** The times that can be adjusted: the five prayers plus Sunrise (shown for information). */
+enum class AdjustableTime { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha }
 
 data class CalculationSettings(
     val method: PrayerCalculationMethod = PrayerCalculationMethod.MuslimWorldLeague,

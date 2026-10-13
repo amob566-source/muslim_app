@@ -40,8 +40,6 @@
     <string name="settings_calculation_summary">Calculation method, Asr madhab, high-latitude rule and adjustments</string>
     <string name="settings_azan_title">Azan sounds</string>
     <string name="settings_azan_summary">Full Azan, short sound or silent for each prayer</string>
-    <string name="settings_general_title">General</string>
-    <string name="settings_general_summary">Time format, theme, privacy and app information</string>
 
     <!-- Shared -->
     <string name="back">Back</string>
@@ -99,7 +97,6 @@
     <!-- Settings -->
     <string name="settings_location_selected">Selected: %1$s</string>
     <string name="settings_location_none">No location selected yet</string>
-    <string name="settings_other_coming_later">General settings will be added in a later stage.</string>
 
     <!-- Prayer Times: calculated state -->
     <string name="next_prayer">Next</string>
@@ -162,7 +159,6 @@
     <string name="calc_high_lat_title">High-latitude rule</string>
     <string name="calc_high_lat_note">Far from the equator the sun may not go low enough for the usual Fajr and Isha angles, especially in summer. These rules set a limit. Where the sun does not rise or set at all, times cannot be calculated.</string>
     <string name="calc_reset">Reset to defaults</string>
-    <string name="calc_adjustments_later">Per-prayer minute adjustments will be added to Settings in a later stage.</string>
     <string name="settings_calculation_current">%1$s · Asr: %2$s</string>
 
     <!-- Qibla screen -->
@@ -263,4 +259,40 @@
     <string name="alarms_test_set">Test alarm set for %1$s.</string>
     <string name="alarms_limits_title">Things that can stop an Azan</string>
     <string name="alarms_limits_text">Android cannot guarantee an alarm in every situation. The Azan may not be heard if: the alarm volume is at zero; Do Not Disturb is set to block alarms; the phone is switched off; permissions above are turned off; the phone maker\'s battery saver closes the app; or another app or a phone call is using the audio. An Azan that was missed (for example because the phone was off) is not played late.</string>
+
+    <!-- Minute adjustments -->
+    <string name="calc_adjustments_title">Minute adjustments</string>
+    <string name="calc_adjustments_note">Add or remove minutes to match your local mosque. For example, add 10 minutes to Fajr to match Malaysia\'s official (JAKIM) timetable. Adjustments also move the Azan alarms. Sunrise is shown for information only.</string>
+    <string name="calc_adjustment_value">%1$s min</string>
+    <string name="calc_adjustment_decrease">One minute earlier for %1$s</string>
+    <string name="calc_adjustment_increase">One minute later for %1$s</string>
+
+    <!-- Settings groups -->
+    <string name="settings_group_prayer">Location and prayer times</string>
+    <string name="settings_group_azan">Azan</string>
+    <string name="settings_group_general">General</string>
+    <string name="settings_group_about">About</string>
+    <string name="settings_time_format_title">Time format</string>
+    <string name="settings_time_format_system">Phone setting</string>
+    <string name="settings_time_format_12">12-hour</string>
+    <string name="settings_time_format_24">24-hour</string>
+    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_system">Phone setting</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_about_title">About and privacy</string>
+    <string name="settings_about_summary">Version, privacy, data sources and limitations</string>
+
+    <!-- About and privacy -->
+    <string name="about_title">About and privacy</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_description">Prayer times, Azan alarms and a Qibla compass that work without internet. Everything is calculated on this phone.</string>
+    <string name="about_privacy_title">Privacy</string>
+    <string name="about_privacy_text">• No account, no advertising, no analytics and no tracking.\n• The app has no internet permission, so it cannot send anything anywhere.\n• Your location is only used to calculate prayer times and the Qibla direction. It is stored on this phone and never leaves it.\n• Location permission is only asked for if you tap \"Use current location\". You can always choose a city or type coordinates instead.\n• App data is excluded from cloud backup and phone-to-phone transfer.</string>
+    <string name="about_permissions_title">Permissions</string>
+    <string name="about_permissions_text">• Location (only if you use GPS): to find your position once.\n• Notifications: to show the Azan notification with a Stop button.\n• Alarms and reminders: to start the Azan at the exact minute.\n• Run at startup, background playback and keep awake: to restore alarms after a restart and to play the Azan with the screen off.</string>
+    <string name="about_sources_title">Data sources and licences</string>
+    <string name="about_sources_text">• Prayer times: Adhan library by Batoul Apps (MIT licence).\n• City list: GeoNames (geonames.org), Creative Commons Attribution 4.0.\n• True north correction: the World Magnetic Model built into Android.\n• Built with Kotlin, Jetpack Compose and AndroidX (Apache licence 2.0).</string>
+    <string name="about_limits_title">Limitations</string>
+    <string name="about_limits_text">• Prayer times are calculated, not copied from a mosque. Methods differ between communities; check against your local mosque and use the minute adjustments if needed.\n• Where the sun does not rise or set (polar regions), times cannot be calculated.\n• A phone compass can be disturbed by magnets, metal and electronics.\n• Android cannot guarantee that an alarm will sound in every situation (see Prayer alarms).</string>
 </resources>

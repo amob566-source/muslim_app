@@ -11,18 +11,24 @@ import com.universalazan.app.data.locations.SavedLocation
 import com.universalazan.app.data.preferences.AlarmSettingsRepository
 import com.universalazan.app.data.preferences.AzanSoundRepository
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
+import com.universalazan.app.data.preferences.GeneralSettings
+import com.universalazan.app.data.preferences.GeneralSettingsRepository
 import com.universalazan.app.data.preferences.LocationRepository
+import com.universalazan.app.data.preferences.ThemeSetting
+import com.universalazan.app.data.preferences.TimeFormatSetting
 import com.universalazan.app.domain.prayer.CalculationSettings
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     locationRepository: LocationRepository,
     calculationSettingsRepository: CalculationSettingsRepository,
     azanSoundRepository: AzanSoundRepository,
     alarmSettingsRepository: AlarmSettingsRepository,
+    private val generalSettingsRepository: GeneralSettingsRepository,
 ) : ViewModel() {
 
     val currentLocation: StateFlow<SavedLocation?> = locationRepository.savedLocation
@@ -41,6 +47,18 @@ class SettingsViewModel(
         .catch { emit(true) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
+    val general: StateFlow<GeneralSettings> = generalSettingsRepository.settings
+        .catch { emit(GeneralSettings()) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), GeneralSettings())
+
+    fun setTimeFormat(value: TimeFormatSetting) {
+        viewModelScope.launch { generalSettingsRepository.setTimeFormat(value) }
+    }
+
+    fun setTheme(value: ThemeSetting) {
+        viewModelScope.launch { generalSettingsRepository.setTheme(value) }
+    }
+
     companion object {
         val Factory = viewModelFactory {
             initializer {
@@ -50,6 +68,7 @@ class SettingsViewModel(
                     container.calculationSettingsRepository,
                     container.azanSoundRepository,
                     container.alarmSettingsRepository,
+                    container.generalSettingsRepository,
                 )
             }
         }

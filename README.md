@@ -10,7 +10,8 @@ Settings. The Qibla direction is calculated offline from the saved location, wit
 on phones that have a magnetic sensor. Each prayer can be set to the full Azan, a short Azan or
 silent, and the Azan plays automatically at prayer times (also with the screen locked). Alarms
 update themselves after a new day, restart, clock or time-zone change and setting changes, without
-re-setting alarms that are still correct.
+re-setting alarms that are still correct. Settings include per-prayer minute adjustments, 12/24-hour
+time, light/dark theme, and an About and privacy page.
 
 ## Project facts
 
@@ -52,7 +53,9 @@ app/src/main/java/com/universalazan/app/
   ui/location/             Location screen and time zone picker
   ui/prayer/               Prayer Times screen and its states (loading, error, ready)
   ui/qibla/                Qibla screen, bearing and live compass dial
-  ui/settings/             Settings, Prayer calculation, Azan sounds and Prayer alarms screens
+  ui/settings/             Settings, Prayer calculation (incl. minute adjustments), Azan sounds,
+                           Prayer alarms, About and privacy
+  ui/common/TimeFormat.kt  12/24-hour formatting used on every screen
   ui/common/               shared screen layout
   ui/theme/                colours (green and gold, light and dark)
 ```
@@ -171,6 +174,17 @@ The app shows this credit on the Location screen. To rebuild the file:
 - Settings → Prayer alarms shows which phone settings need attention and has a
   "Test alarm in 1 minute" button.
 - How it works, what was tested and its limits: [docs/alarms.md](docs/alarms.md).
+
+## Settings
+
+| Group | Settings |
+|---|---|
+| Location and prayer times | Location (city, coordinates, GPS, time zone); calculation method, Asr, high-latitude rule, **minute adjustments per prayer (±60 min)**, reset |
+| Azan | Full / short / silent per prayer with test playback; Prayer alarms on/off, permission status and test alarm |
+| General | Time format (phone setting, 12-hour, 24-hour); theme (phone setting, light, dark) |
+| About | Version, privacy statement, permissions explained, data sources and licences, limitations |
+
+All settings are saved on the phone (DataStore) and survive restarts.
 
 ## Internet use
 

@@ -11,6 +11,7 @@ import com.universalazan.app.data.locations.DeviceLocationProvider
 import com.universalazan.app.data.preferences.AlarmSettingsRepository
 import com.universalazan.app.data.preferences.AzanSoundRepository
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
+import com.universalazan.app.data.preferences.GeneralSettingsRepository
 import com.universalazan.app.data.preferences.LocationRepository
 import com.universalazan.app.data.preferences.settingsDataStore
 import com.universalazan.app.sensors.CompassSensor
@@ -42,6 +43,7 @@ class AppContainer(context: Context) {
     val azanSoundRepository = AzanSoundRepository(context.settingsDataStore)
     val azanPlayer = AzanPlayer(context.applicationContext)
     val alarmSettingsRepository = AlarmSettingsRepository(context.settingsDataStore)
+    val generalSettingsRepository = GeneralSettingsRepository(context.settingsDataStore)
     val alarmScheduler = PrayerAlarmScheduler(context.applicationContext)
     val alarmCoordinator = AlarmCoordinator(
         locationRepository,

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.universalazan.app.UniversalAzanApp
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
+import com.universalazan.app.domain.prayer.AdjustableTime
 import com.universalazan.app.domain.prayer.AsrMadhab
 import com.universalazan.app.domain.prayer.CalculationSettings
 import com.universalazan.app.domain.prayer.HighLatitudeOption
@@ -35,6 +36,11 @@ class CalculationSettingsViewModel(
 
     fun setHighLatitude(option: HighLatitudeOption) {
         viewModelScope.launch { repository.setHighLatitude(option) }
+    }
+
+    fun changeAdjustment(time: AdjustableTime, deltaMinutes: Int) {
+        val updated = settings.value.adjustments.changedBy(time, deltaMinutes)
+        viewModelScope.launch { repository.setAdjustments(updated) }
     }
 
     fun resetToDefaults() {

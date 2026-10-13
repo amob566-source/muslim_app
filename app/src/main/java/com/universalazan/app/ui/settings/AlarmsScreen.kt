@@ -42,6 +42,7 @@ import com.universalazan.app.R
 import com.universalazan.app.alarms.PlannedAlarm
 import com.universalazan.app.data.locations.SavedLocation
 import com.universalazan.app.ui.common.ScreenContainer
+import com.universalazan.app.ui.common.formatClockTime
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -183,14 +184,15 @@ fun AlarmsScreen(
                     Text(stringResource(R.string.alarms_upcoming_none), style = MaterialTheme.typography.bodyMedium)
                 } else {
                     val locale = LocalConfiguration.current.locales[0]
-                    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT).withLocale(locale)
+                    val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
                     val zone = location?.zoneId ?: ZoneId.systemDefault()
                     upcoming.forEach { alarm ->
+                        val at = alarm.time.atZone(zone)
                         Text(
                             text = stringResource(
                                 R.string.alarms_upcoming_item,
                                 stringResource(alarm.prayer.labelRes),
-                                formatter.format(alarm.time.atZone(zone)),
+                                dateFormatter.format(at) + ", " + formatClockTime(at),
                             ) + " · " + stringResource(alarm.sound.labelRes),
                             style = MaterialTheme.typography.bodyMedium,
                         )
@@ -204,9 +206,7 @@ fun AlarmsScreen(
         }
         Text(stringResource(R.string.alarms_test_explanation), style = MaterialTheme.typography.bodySmall)
         if (testAlarmAt != null) {
-            val time = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM)
-                .withLocale(LocalConfiguration.current.locales[0])
-                .format(testAlarmAt.atZone(ZoneId.systemDefault()))
+            val time = formatClockTime(testAlarmAt.atZone(ZoneId.systemDefault()))
             Text(stringResource(R.string.alarms_test_set, time), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
         }
 

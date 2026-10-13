@@ -7,6 +7,7 @@ import com.universalazan.app.audio.AzanPlayer
 import com.universalazan.app.data.preferences.AlarmSettingsRepository
 import com.universalazan.app.data.preferences.AzanSoundRepository
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
+import com.universalazan.app.data.preferences.GeneralSettingsRepository
 import com.universalazan.app.data.preferences.LocationRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.rules.ExternalResource
@@ -29,6 +30,7 @@ fun testAzanPlayer(): AzanPlayer = container.azanPlayer
 fun testAlarmSettingsRepository(): AlarmSettingsRepository = container.alarmSettingsRepository
 fun testAlarmCoordinator(): AlarmCoordinator = container.alarmCoordinator
 fun testAlarmScheduler(): PrayerAlarmScheduler = container.alarmScheduler
+fun testGeneralSettingsRepository(): GeneralSettingsRepository = container.generalSettingsRepository
 
 /** Runs an adb-style shell command on the device (e.g. to grant a permission for a test). */
 fun shell(command: String): String {
@@ -51,6 +53,7 @@ class ResetAppSettingsRule : ExternalResource() {
             testCalculationSettingsRepository().resetToDefaults()
             testAzanSoundRepository().resetToDefaults()
             testAlarmSettingsRepository().resetToDefaults()
+            testGeneralSettingsRepository().resetToDefaults()
             testAlarmCoordinator().reschedule()
         }
         testAlarmScheduler().cancelAll()

@@ -1,6 +1,5 @@
 package com.universalazan.app.ui.prayer
 
-import android.text.format.DateFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -35,6 +33,7 @@ import com.universalazan.app.data.locations.SavedLocation
 import com.universalazan.app.domain.location.formatCoordinates
 import com.universalazan.app.domain.prayer.CalculationSettings
 import com.universalazan.app.ui.common.ScreenContainer
+import com.universalazan.app.ui.common.formatClockTime
 import com.universalazan.app.ui.theme.UniversalAzanTheme
 import java.time.Instant
 import java.time.LocalDate
@@ -315,15 +314,12 @@ private fun PrayerRowItem(row: PrayerRowUi, date: LocalDate) {
 }
 
 /**
- * Formats a time in the phone's 12- or 24-hour style. Marks times that fall on another
+ * Formats a time in the chosen 12- or 24-hour style. Marks times that fall on another
  * calendar day (possible for Isha or Fajr in some places).
  */
 @Composable
 private fun formatPrayerTime(time: ZonedDateTime, date: LocalDate): String {
-    val context = LocalContext.current
-    val locale = LocalConfiguration.current.locales[0]
-    val pattern = if (DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm a"
-    val text = time.format(DateTimeFormatter.ofPattern(pattern, locale))
+    val text = formatClockTime(time)
     return when {
         time.toLocalDate().isAfter(date) -> text + " " + stringResource(R.string.time_next_day)
         time.toLocalDate().isBefore(date) -> text + " " + stringResource(R.string.time_previous_day)
