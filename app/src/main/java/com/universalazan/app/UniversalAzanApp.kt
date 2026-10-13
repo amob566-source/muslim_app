@@ -7,6 +7,7 @@ import com.universalazan.app.data.locations.DeviceLocationProvider
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
 import com.universalazan.app.data.preferences.LocationRepository
 import com.universalazan.app.data.preferences.settingsDataStore
+import com.universalazan.app.sensors.CompassSensor
 
 class UniversalAzanApp : Application() {
     val container: AppContainer by lazy { AppContainer(this) }
@@ -18,4 +19,5 @@ class AppContainer(context: Context) {
     val calculationSettingsRepository = CalculationSettingsRepository(context.settingsDataStore)
     val cityRepository = CityRepository(context.assets)
     val deviceLocationProvider = DeviceLocationProvider(context)
+    val compassSensor = CompassSensor(context)
 }

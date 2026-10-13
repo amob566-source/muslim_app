@@ -177,5 +177,29 @@
     <string name="qibla_antipode">This place is on the exact opposite side of the Earth from the Kaaba, so every direction leads to it equally.</string>
     <string name="qibla_invalid_coordinates">The saved coordinates are not valid. Please choose your location again.</string>
     <string name="qibla_true_north_note">This bearing is measured from true (geographic) north. An ordinary magnetic compass points to magnetic north, which can differ by several degrees depending on where you are.</string>
-    <string name="qibla_compass_coming">A live compass that turns with your phone will be added in the next stage.</string>
+
+    <!-- Live compass -->
+    <string name="compass_title">Live compass</string>
+    <string name="compass_north">N</string>
+    <string name="compass_east">E</string>
+    <string name="compass_south">S</string>
+    <string name="compass_west">W</string>
+    <string name="compass_waiting">Starting the compass…</string>
+    <string name="compass_stopped">The compass sensor stopped sending readings. Leave this screen and come back to restart it.</string>
+    <string name="compass_unavailable_title">No compass sensor</string>
+    <string name="compass_unavailable">This device does not have a magnetic sensor, so a live compass is not possible. Use the Qibla bearing above with a separate compass, remembering that a compass shows magnetic north.</string>
+    <string name="compass_heading">Phone pointing: %1$s° (%2$s)</string>
+    <string name="compass_turn_right">Turn right %1$s°</string>
+    <string name="compass_turn_left">Turn left %1$s°</string>
+    <string name="compass_facing">You are facing the Qibla</string>
+    <string name="compass_dial_description">Compass. %1$s</string>
+    <string name="compass_how_to">Hold the phone flat (or upright with the screen facing you), away from metal and magnets. Turn until the gold Kaaba marker is at the top, under the green pointer.</string>
+    <string name="compass_true_north">Corrected to true north using this phone\'s built-in magnetic model (correction here: %1$s°).</string>
+    <string name="compass_accuracy_high">Sensor accuracy: high</string>
+    <string name="compass_accuracy_medium">Sensor accuracy: medium</string>
+    <string name="compass_accuracy_low">Sensor accuracy is low. Calibrate: move the phone in a figure-of-eight a few times.</string>
+    <string name="compass_accuracy_unreliable">The compass is not calibrated and may be wrong. Move the phone in a figure-of-eight a few times, away from metal.</string>
+    <string name="compass_accuracy_unknown">Sensor accuracy not reported yet.</string>
+    <string name="compass_interference">Strong magnetic interference detected. Move away from magnets, metal objects, speakers, laptops and magnetic phone cases.</string>
+    <string name="compass_disclaimer">Phone compasses can be disturbed by magnets, metal, phone cases and electronics. If in doubt, check the direction against a mosque or another reliable source.</string>
 </resources>
