@@ -20,8 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.universalazan.app.R
+import com.universalazan.app.audio.AzanSound
+import com.universalazan.app.audio.AzanSoundSettings
 import com.universalazan.app.data.locations.SavedLocation
 import com.universalazan.app.domain.prayer.CalculationSettings
+import com.universalazan.app.domain.prayer.Prayer
 import com.universalazan.app.ui.common.ScreenContainer
 import com.universalazan.app.ui.prayer.labelRes
 import com.universalazan.app.ui.prayer.shortLabelRes
@@ -31,21 +34,25 @@ import com.universalazan.app.ui.theme.UniversalAzanTheme
 fun SettingsRoute(
     onOpenLocation: () -> Unit,
     onOpenCalculationSettings: () -> Unit,
+    onOpenAzanSounds: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
 ) {
     val currentLocation by viewModel.currentLocation.collectAsStateWithLifecycle()
     val calculationSettings by viewModel.calculationSettings.collectAsStateWithLifecycle()
+    val azanSounds by viewModel.azanSounds.collectAsStateWithLifecycle()
     SettingsScreen(
         currentLocation = currentLocation,
         calculationSettings = calculationSettings,
+        azanSounds = azanSounds,
         onOpenLocation = onOpenLocation,
         onOpenCalculationSettings = onOpenCalculationSettings,
+        onOpenAzanSounds = onOpenAzanSounds,
         modifier = modifier,
     )
 }
 
-/** Location and calculation settings work; the other groups are listed but not available yet. */
+/** Location, calculation and Azan sound settings work; general settings come later. */
 @Composable
 fun SettingsScreen(
     currentLocation: SavedLocation?,
@@ -53,6 +60,8 @@ fun SettingsScreen(
     onOpenLocation: () -> Unit,
     onOpenCalculationSettings: () -> Unit,
     modifier: Modifier = Modifier,
+    azanSounds: AzanSoundSettings = AzanSoundSettings(),
+    onOpenAzanSounds: () -> Unit = {},
 ) {
     ScreenContainer(title = stringResource(R.string.nav_settings), modifier = modifier) {
         SettingsLink(
@@ -74,12 +83,24 @@ fun SettingsScreen(
             testTag = SETTINGS_CALCULATION_TAG,
             onClick = onOpenCalculationSettings,
         )
+        val counts = Prayer.entries.groupingBy { azanSounds.soundFor(it) }.eachCount()
+        SettingsLink(
+            titleRes = R.string.settings_azan_title,
+            summaryRes = R.string.settings_azan_summary,
+            current = stringResource(
+                R.string.settings_azan_current,
+                counts[AzanSound.Full] ?: 0,
+                counts[AzanSound.Short] ?: 0,
+                counts[AzanSound.Silent] ?: 0,
+            ),
+            testTag = SETTINGS_AZAN_TAG,
+            onClick = onOpenAzanSounds,
+        )
         Text(
             text = stringResource(R.string.settings_other_coming_later),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        SettingsGroup(R.string.settings_azan_title, R.string.settings_azan_summary)
         SettingsGroup(R.string.settings_general_title, R.string.settings_general_summary)
     }
 }
@@ -138,6 +159,7 @@ private fun SettingsGroup(@StringRes titleRes: Int, @StringRes summaryRes: Int) 
 
 const val SETTINGS_LOCATION_TAG = "settings_location"
 const val SETTINGS_CALCULATION_TAG = "settings_calculation"
+const val SETTINGS_AZAN_TAG = "settings_azan"
 
 @Preview(showBackground = true)
 @Composable

@@ -13,3 +13,10 @@ build/
 *.jks
 *.keystore
 keystore.properties
+
+# Original Azan recordings (large); optimised copies live in app/src/main/res/raw
+audio_source/*
+!audio_source/README.txt
+
+# Personal Azan recordings: private use only, never pushed to GitHub
+app/src/personalAudio/

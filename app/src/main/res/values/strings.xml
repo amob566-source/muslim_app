@@ -38,7 +38,7 @@
     <string name="settings_location_summary">Current location, saved cities, manual coordinates and time zone</string>
     <string name="settings_calculation_title">Prayer calculation</string>
     <string name="settings_calculation_summary">Calculation method, Asr madhab, high-latitude rule and adjustments</string>
-    <string name="settings_azan_title">Azan</string>
+    <string name="settings_azan_title">Azan sounds</string>
     <string name="settings_azan_summary">Full Azan, short sound or silent for each prayer</string>
     <string name="settings_general_title">General</string>
     <string name="settings_general_summary">Time format, theme, privacy and app information</string>
@@ -99,7 +99,7 @@
     <!-- Settings -->
     <string name="settings_location_selected">Selected: %1$s</string>
     <string name="settings_location_none">No location selected yet</string>
-    <string name="settings_other_coming_later">Azan and general settings will be added in later stages.</string>
+    <string name="settings_other_coming_later">General settings will be added in a later stage.</string>
 
     <!-- Prayer Times: calculated state -->
     <string name="next_prayer">Next</string>
@@ -202,4 +202,27 @@
     <string name="compass_accuracy_unknown">Sensor accuracy not reported yet.</string>
     <string name="compass_interference">Strong magnetic interference detected. Move away from magnets, metal objects, speakers, laptops and magnetic phone cases.</string>
     <string name="compass_disclaimer">Phone compasses can be disturbed by magnets, metal, phone cases and electronics. If in doubt, check the direction against a mosque or another reliable source.</string>
+
+    <!-- Azan sounds -->
+    <string name="azan_sound_full">Full Azan</string>
+    <string name="azan_sound_short">Short</string>
+    <string name="azan_sound_silent">Silent</string>
+    <string name="azan_sounds_title">Azan sounds</string>
+    <string name="azan_sounds_intro">Choose what plays at each prayer time. Alarms that play these sounds at the right time will be added in the next stage.</string>
+    <string name="azan_sounds_fajr_note">Fajr uses the full Fajr Azan. The other prayers use a version without \"aṣ-ṣalātu khayrun mina n-nawm\", which is only said at Fajr.</string>
+    <string name="azan_sounds_recording">Recording</string>
+    <string name="azan_sounds_test_tone_warning">The app currently contains test tones, not an Azan recording.</string>
+    <string name="azan_test_play">Test</string>
+    <string name="azan_test_stop">Stop</string>
+    <string name="azan_test_play_description">Play test sound for %1$s</string>
+    <string name="azan_test_stop_description">Stop sound for %1$s</string>
+    <string name="azan_silent_note">Silent: nothing will play.</string>
+    <string name="azan_playing">Playing…</string>
+    <string name="azan_alarm_volume">Sounds play at the alarm volume.</string>
+    <string name="azan_alarm_volume_muted">The alarm volume is turned down to zero, so you will not hear anything. Turn it up in your phone\'s sound settings.</string>
+    <string name="azan_error_missing">The audio file is missing from the app.</string>
+    <string name="azan_error_failed">The audio file could not be played.</string>
+    <string name="azan_error_focus">Another app (for example a phone call) is using the audio. Try again when it has finished.</string>
+    <string name="azan_reset">Reset to defaults</string>
+    <string name="settings_azan_current">Full: %1$d · Short: %2$d · Silent: %3$d</string>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TEST audio set (in Git). The files in ../raw are beep tones generated with ffmpeg, not Azan
+  recordings. They are used automatically when app/src/personalAudio/ does not exist.
+  See README.md, "Azan audio", for how to add recordings.
+-->
+<resources>
+    <bool name="bundled_audio_is_test_tone">true</bool>
+    <string name="bundled_audio_description">Test tones only (beeps), not an Azan. Add licensed Azan recordings as described in the README.</string>
+</resources>

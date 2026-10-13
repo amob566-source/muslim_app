@@ -37,6 +37,17 @@ android {
     buildFeatures {
         compose = true
     }
+
+    // Azan audio: use personal recordings if present (src/personalAudio, not in Git),
+    // otherwise the clearly labelled test tones in src/testAudio. Both define the same
+    // resource names (raw/azan_full, raw/azan_full_fajr, raw/azan_short).
+    sourceSets {
+        getByName("main") {
+            val personalAudio = file("src/personalAudio/res")
+            val audioRes = if (personalAudio.resolve("raw").isDirectory) personalAudio else file("src/testAudio/res")
+            res.directories.add(audioRes.path)
+        }
+    }
 }
 
 dependencies {

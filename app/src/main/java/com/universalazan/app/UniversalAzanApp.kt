@@ -2,8 +2,10 @@ package com.universalazan.app
 
 import android.app.Application
 import android.content.Context
+import com.universalazan.app.audio.AzanPlayer
 import com.universalazan.app.data.locations.CityRepository
 import com.universalazan.app.data.locations.DeviceLocationProvider
+import com.universalazan.app.data.preferences.AzanSoundRepository
 import com.universalazan.app.data.preferences.CalculationSettingsRepository
 import com.universalazan.app.data.preferences.LocationRepository
 import com.universalazan.app.data.preferences.settingsDataStore
@@ -20,4 +22,6 @@ class AppContainer(context: Context) {
     val cityRepository = CityRepository(context.assets)
     val deviceLocationProvider = DeviceLocationProvider(context)
     val compassSensor = CompassSensor(context)
+    val azanSoundRepository = AzanSoundRepository(context.settingsDataStore)
+    val azanPlayer = AzanPlayer(context.applicationContext)
 }

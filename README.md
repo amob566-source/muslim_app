@@ -7,7 +7,9 @@ No accounts, no ads, no analytics, no internet needed for normal use.
 GPS), and prayer times are calculated on the device for that location's own date and time zone.
 Calculation method, Asr (Standard or Hanafi) and the high-latitude rule can be changed in
 Settings. The Qibla direction is calculated offline from the saved location, with a live compass
-on phones that have a magnetic sensor. Azan audio and alarms are not implemented yet.
+on phones that have a magnetic sensor. Each prayer can be set to the full Azan, a short Azan or
+silent, and the sounds can be tested in Settings. Alarms that play the Azan at prayer times are not
+implemented yet.
 
 ## Project facts
 
@@ -41,13 +43,14 @@ app/src/main/java/com/universalazan/app/
   domain/prayer/           prayer-time calculation with the Adhan library (pure Kotlin)
   domain/qibla/            Qibla bearing and distance to the Kaaba (pure Kotlin)
   sensors/                 compass sensors, heading maths, magnetic-to-true-north correction
+  audio/                   Azan sound choices and the shared Azan player
   data/locations/          saved-location model, offline city list and search, GPS reader
   data/preferences/        saves settings on the device (DataStore)
   ui/navigation/           the three sections and the bottom bar / side rail
   ui/location/             Location screen and time zone picker
   ui/prayer/               Prayer Times screen and its states (loading, error, ready)
   ui/qibla/                Qibla screen, bearing and live compass dial
-  ui/settings/             Settings screen and Prayer calculation settings
+  ui/settings/             Settings, Prayer calculation and Azan sounds screens
   ui/common/               shared screen layout
   ui/theme/                colours (green and gold, light and dark)
 ```
@@ -140,6 +143,16 @@ The app shows this credit on the Location screen. To rebuild the file:
   north, with calibration and interference warnings. Phones without a magnetic sensor get an
   explanation instead of a compass. How it works, what was tested, and how to test on a real
   phone: [docs/compass-testing.md](docs/compass-testing.md).
+
+## Azan audio
+
+- Recordings are bundled in the app and played offline at the alarm volume.
+- **Personal recordings are never pushed to GitHub.** They live in `app/src/personalAudio/`
+  (ignored by Git). Without that folder, the app is built with clearly labelled test tones from
+  `app/src/testAudio/`.
+- The full Fajr Azan is only used for Fajr; the other prayers use a version without
+  "aṣ-ṣalātu khayrun mina n-nawm".
+- Details, file sources and how to replace the recordings: [docs/azan-audio.md](docs/azan-audio.md).
 
 ## Internet use
 
