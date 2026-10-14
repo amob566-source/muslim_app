@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Sky Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#08121E" />
+      <stop offset="100%" stop-color="#0E3D3E" />
+    </linearGradient>
+
+    <!-- Metallic Gold Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE6A9" />
+      <stop offset="50%" stop-color="#E0B865" />
+      <stop offset="100%" stop-color="#9E7326" />
+    </linearGradient>
+
+    <!-- Arch Glow Effect -->
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Icon Canvas (Rounded App Container) -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Concentric Qibla Radar Rings -->
+  <circle cx="256" cy="270" r="170" fill="none" stroke="#E0B865" stroke-width="1.5" stroke-opacity="0.25" stroke-dasharray="6,6" />
+  <circle cx="256" cy="270" r="120" fill="none" stroke="#E0B865" stroke-width="1.5" stroke-opacity="0.35" />
+
+  <!-- Outer Mihrab / Compass Arch -->
+  <path d="M 136,410 V 250 C 136,170 256,100 256,100 C 256,100 376,170 376,250 V 410" 
+        fill="none" 
+        stroke="url(#goldGrad)" 
+        stroke-width="14" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        filter="url(#subtleGlow)" />
+
+  <!-- Dynamic Qibla Compass Needle (Pointing Directly Up / North) -->
+  <g transform="translate(256, 260)">
+    <!-- North/Qibla Pointer (Gold) -->
+    <polygon points="0,-110 24,-15 0,0" fill="#FCE6A9" />
+    <polygon points="0,-110 -24,-15 0,0" fill="#C29438" />
+    
+    <!-- South Pointer (Subtle Tail) -->
+    <polygon points="0,60 16,0 0,-15" fill="#1C4B4B" />
+    <polygon points="0,60 -16,0 0,-15" fill="#123333" />
+
+    <!-- Center Pivot Pin -->
+    <circle cx="0" cy="0" r="10" fill="#FFFFFF" />
+    <circle cx="0" cy="0" r="5" fill="#08121E" />
+  </g>
+
+  <!-- Crescent & Star Arch Peak Motif -->
+  <path d="M 256,62 A 16,16 0 1,1 270,82 A 13,13 0 1,0 256,62 Z" fill="url(#goldGrad)" />
+</svg>

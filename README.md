@@ -62,6 +62,11 @@ app/src/main/java/com/universalazan/app/
   ui/theme/                colours (green and gold, light and dark)
 ```
 
+**App icon:** made from `logo/gemini-svg.svg`. After changing the logo, run
+`G:\Python312\python.exe -I tools\build_launcher_icon.py`, which rewrites the three icon layers in
+`app/src/main/res/drawable/` (`ic_launcher_background`, `ic_launcher_foreground`, and
+`ic_launcher_monochrome` for Android 13+ themed icons).
+
 ## Build and run
 
 ### Easiest: Android Studio
